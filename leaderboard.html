@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./site-additions.css">
   <link rel="stylesheet" href="./leaderboard.css">
-  <link rel="icon" type="image/png" href="./favicon.png">
   <script defer src="./config.js"></script>
   <script defer src="./site-additions.js"></script>
   <script defer src="./leaderboard.js"></script>
@@ -68,6 +67,10 @@
             <div><span>Total Completions</span><strong id="selectedPlayerCount">—</strong></div>
           </div>
           <div class="player-clears-head"><h3>Completed Wallhops</h3><span id="selectedPlayerCaption">0 completions</span></div>
+          <label class="search-field player-clears-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.3 16.3 5 5"/></svg>
+            <input id="completedWallhopSearch" type="search" placeholder="Search completed wallhops..." autocomplete="off" aria-label="Search this player's completed wallhops" aria-controls="selectedPlayerClears">
+          </label>
           <ol id="selectedPlayerClears" class="player-clears"><li class="player-empty">Select a name to view their cleared wallhops.</li></ol>
         </section>
         <p class="leaderboard-footnote" id="leaderboardUpdated">Based on the site's published Victors data.</p>

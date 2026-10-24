@@ -7,7 +7,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const state = {mode:'hardest', search:'', players:[], selected:'', rankings:null, victors:null};
+  const state = {mode:'hardest', search:'', completedSearch:'', players:[], selected:'', rankings:null, victors:null};
   const text = x => String(x ?? '').trim();
   const canonical = x => text(x).normalize('NFKC').replace(/[\u200b-\u200f\u2060\ufeff]/g,'').replace(/[\u2018\u2019\u201b\u00b4\u0060]/g,"'").replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,' ').toLowerCase();
   const signature = x => canonical(x).replace(/[^\p{L}\p{N}]+/gu,'');
@@ -96,9 +96,18 @@
     $('selectedPlayerName').textContent=player.name;
     $('selectedPlayerBest').textContent=player.clears[0].title;
     $('selectedPlayerCount').textContent=String(player.clears.length);
-    $('selectedPlayerCaption').textContent=player.clears.length+' completion'+(player.clears.length===1?'':'s');
+    // Filter only this player's completed wallhops by title.
+    // The player's placement, Hardest result and total completions never change.
+    const query=canonical(state.completedSearch);
+    const visibleClears=player.clears.filter(clear=>!query||canonical(clear.title).includes(query));
+    $('selectedPlayerCaption').textContent=query
+      ? `${visibleClears.length} of ${player.clears.length} completions`
+      : player.clears.length+' completion'+(player.clears.length===1?'':'s');
     const frag=document.createDocumentFragment();
-    player.clears.forEach(clear=>{
+    if(!visibleClears.length){
+      frag.append(node('li','player-empty','No completed wallhops match your search.'));
+    }
+    visibleClears.forEach(clear=>{
       const li=node('li');const link=node('a');link.href=makeWallhopLink(clear);
       link.title='Open '+clear.title+' in '+(clear.platform==='legacy'?'Legacy List':'PC Wallhops');
       link.append(node('span','player-clear-rank'+rankClass(clear.rank),'#'+clear.rank),node('span','player-clear-title',clear.title),node('span','player-clear-tag',clear.platform==='legacy'?'Legacy':'PC'));
@@ -123,7 +132,15 @@
       best.title='Hardest clear: #'+player.clears[0].rank;
       const total=node('td','leaderboard-total',String(player.clears.length));
       tr.append(place,username,best,total);
-      const choose=()=>{state.selected=player.key;renderPlayers();renderPlayerDetails();if(window.innerWidth<=900)$('playerDetailsPanel').scrollIntoView({behavior:'smooth',block:'start'});};
+      const choose=()=>{
+        if(state.selected!==player.key){
+          state.completedSearch='';
+          $('completedWallhopSearch').value='';
+        }
+        state.selected=player.key;
+        renderPlayers();renderPlayerDetails();
+        if(window.innerWidth<=900)$('playerDetailsPanel').scrollIntoView({behavior:'smooth',block:'start'});
+      };
       tr.addEventListener('click',choose);
       tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
       frag.append(tr);
@@ -170,6 +187,10 @@
   }
   function init(){
     $('playerSearch').addEventListener('input',e=>{state.search=e.target.value;renderPlayers();});
+    $('completedWallhopSearch').addEventListener('input',e=>{
+      state.completedSearch=e.target.value;
+      renderPlayerDetails();
+    });
     $('playerMode').addEventListener('change',e=>{state.mode=e.target.value==='total'?'total':'hardest';recompute();});
     refresh();
     setInterval(()=>{if(!document.hidden)refresh();},30000);
