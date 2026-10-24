@@ -1,6 +1,7 @@
 /* TTWL player leaderboard — no extra API, account, or spreadsheet required.
    Based exclusively on published data/rankings.json + data/victors.json.
-   Hardest: lexicographic comparison of ascending completed ranks.
+   Hardest: lexicographic comparison of PC ranks first, then Legacy ranks.
+   This prevents Legacy #1 from masking a current PC #1/#2/#3 clear.
    Total: completed wallhop count descending.
    Each player receives a unique sequential display rank in both modes. */
 (() => {
@@ -12,10 +13,18 @@
   const signature = x => canonical(x).replace(/[^\p{L}\p{N}]+/gu,'');
   const validName = x => /^[A-Za-z0-9_]{3,20}$/.test(text(x));
   const node = (tag, className, value) => {const n=document.createElement(tag);if(className)n.className=className;if(value!==undefined)n.textContent=value;return n;};
-  const byRank = (a,b) => a.rank-b.rank || a.platform.localeCompare(b.platform) || a.title.localeCompare(b.title,'en');
+  // PC Wallhops and Legacy have independent rank scales. Compare the current
+  // PC list first; use Legacy only after all compared PC records are tied.
+  const platformPriority = platform => platform === 'pc' ? 0 : 1;
+  const byRank = (a,b) => platformPriority(a.platform)-platformPriority(b.platform)
+    || a.rank-b.rank || a.title.localeCompare(b.title,'en');
   function compareHardest(a,b){
-    const x=a.clears.map(c=>c.rank), y=b.clears.map(c=>c.rank);
-    for(let i=0;i<Math.min(x.length,y.length);i++)if(x[i]!==y[i])return x[i]-y[i];
+    const x=a.clears, y=b.clears;
+    for(let i=0;i<Math.min(x.length,y.length);i++){
+      const first=platformPriority(x[i].platform)-platformPriority(y[i].platform);
+      if(first)return first;
+      if(x[i].rank!==y[i].rank)return x[i].rank-y[i].rank;
+    }
     return y.length-x.length;
   }
   function compareTotal(a,b){return b.clears.length-a.clears.length;}
