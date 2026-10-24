@@ -124,3 +124,26 @@
   .leaderboard-table th, .leaderboard-table td { padding: 10px 8px; }
   .player-details-summary { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
 }
+
+/* FIX: the compact Completed Wallhops search field was collapsing vertically
+   because .search-field input uses height:100% but this wrapper had no height. */
+.player-details-panel .player-clears-search {
+  position: relative;
+  height: 45px;
+  min-height: 45px;
+  flex-shrink: 0;
+}
+.player-details-panel .player-clears-search input {
+  box-sizing: border-box;
+  height: 45px;
+  min-height: 45px;
+  width: 100%;
+  padding: 0 12px 0 43px;
+  font-size: 13px;
+  line-height: normal;
+}
+.player-details-panel .player-clears-search svg {
+  left: 13px;
+  width: 19px;
+  height: 19px;
+}
