@@ -1,12 +1,10 @@
-/* TTWL fixed Points by difficulty — rank-independent presentation add-on.
- * Based on numeric difficulty only, never list position or number of entries.
- * PC + Legacy only, Mobile excluded.
- * Fixed Points at integer difficulties:
- * 0=100, 1=200, 2=300, 3=400, 4=1,000, 5=7,000, 6=50,000.
- * Digits after the decimal add 0..99 Points: e.g. 2.20 -> +20, 2.02 -> +2.
- * Thus 0.01=101, 0.5=150, 2.2=320, 6.5=50,050.
- * This is an original TTWL model inspired by the tier/decimal approach of SCLP,
- * NOT a verified copy of SCLP's private XP rules.
+/* TTWL Points by difficulty — rank-independent presentation add-on.
+ * PC + Legacy only; Mobile excluded (same behavior as original site).
+ * New continuous scale: 0.00=100, 1.00=200, ..., 6.00=700.
+ * Fractional growth is adapted from the examples supplied for SCLP:
+ * 8.00=100, 8.64=200, 8.99=296, 9.00=300.
+ * This is a TTWL custom formula, not SCLP's verified internal formula.
+ * A newly inserted wallhop NEVER alters existing wallhops' Points.
  */
 (() => {
   'use strict';
@@ -16,29 +14,18 @@
   const POINTS_HEADER = 'ttwl-points-heading';
   const POINTS_COL = 'ttwl-points-col';
   const format = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
-
-  // The integer difficulty sets the points tier; decimals add fixed 0–99 points.
-  // Keep this table stable as the number of wallhops changes.
-  const XP_AT_INTEGER_DIFFICULTY = Object.freeze([
-    100,    // 0.0
-    200,    // 1.0
-    300,    // 2.0
-    400,    // 3.0
-    1000,   // 4.0
-    7000,   // 5.0
-    50000   // 6.0
-  ]);
+  const CURVE = Math.log(0.5) / Math.log(0.64); // approximately 1.55314186
 
   function pointsFor(raw) {
-    const text = String(raw ?? '').trim().replace(',', '.');
-    // Reject unrated/empty and any ambiguous or out-of-range difficulty.
-    if (!/^[0-6](?:\.\d{1,2})?$/.test(text)) return null;
-    const difficulty = Number(text);
+    const value = String(raw ?? '').trim().replace(',', '.');
+    if (!/^[0-6](?:\.\d{1,2})?$/.test(value)) return null;
+    const difficulty = Number(value);
     if (!Number.isFinite(difficulty) || difficulty < 0 || difficulty >= 7) return null;
-    const tier = Math.floor(difficulty);
-    // Decimal digits determine the tens/ones exactly; 2.20 -> +20.
-    const fractionalXP = Math.round((difficulty - tier) * 100);
-    return XP_AT_INTEGER_DIFFICULTY[tier] + fractionalXP;
+    const whole = Math.floor(difficulty);
+    // Compute the fractional part in hundredths to avoid floating-point artifacts.
+    const hundredths = Math.round(difficulty * 100) - whole * 100;
+    const fraction = hundredths / 100;
+    return 100 + whole * 100 + (hundredths === 0 ? 0 : Math.max(1, Math.floor(100 * (fraction ** CURVE) + 1e-9)));
   }
 
   function platform() {
@@ -73,7 +60,6 @@
       th.id = POINTS_HEADER;
       th.scope = 'col';
       th.textContent = 'Points';
-      // After "Difficulty / Tier", before "Verifier(s)".
       headingRow.cells[2]?.after(th);
     }
     if (colgroup && !column) {
@@ -98,10 +84,8 @@
       const difficulty = tr.querySelector('.difficulty-score');
       const thirdCell = tr.cells[2];
       if (!difficulty || !thirdCell) {
-        // Loading / no-results row needs to span every visible column.
         if (tr.cells.length === 1) {
-          const span = document.querySelector('.rankings-table thead tr')?.cells.length || 10;
-          tr.cells[0].colSpan = span;
+          tr.cells[0].colSpan = document.querySelector('.rankings-table thead tr')?.cells.length || 10;
         }
         continue;
       }
@@ -158,7 +142,6 @@
       document.title = 'TTWL';
     });
   }
-
   function init() {
     document.title = 'TTWL';
     const tbody = $('rankingRows');
@@ -179,6 +162,5 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
-  // Useful for quick console verification; does not modify the rankings data.
   window.TTWLPoints = Object.freeze({ calculate: pointsFor });
 })();

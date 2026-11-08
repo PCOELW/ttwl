@@ -3,25 +3,24 @@
    Hardest: lexicographic comparison of PC ranks first, then Legacy ranks.
    This prevents Legacy #1 from masking a current PC #1/#2/#3 clear.
    Total: completed wallhop count descending.
-   Points: fixed difficulty XP sum (PC + Legacy, never Mobile).
+   Points: sum of fixed difficulty Points (PC + Legacy, never Mobile).
+   Same continuous Points formula as ttwl-points.js; never based on rank.
    Each player receives a unique sequential display rank in all modes. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
   const state = {mode:'hardest', search:'', completedSearch:'', players:[], selected:'', rankings:null, victors:null};
   const text = x => String(x ?? '').trim();
-  const xpFormat = new Intl.NumberFormat('en-US');
-  // Identical to the fixed difficulty XP used by ttwl-points.js.
-  // This function intentionally does not use position, ranking length, or place.
-  // Fixed tier bases: 0=100, 1=200, 2=300, 3=400, 4=1000, 5=7000, 6=50000.
-  const XP_BASE = Object.freeze([100, 200, 300, 400, 1000, 7000, 50000]);
-  function xpFromDifficulty(raw){
+  const pointsFormat = new Intl.NumberFormat('en-US');
+  const CURVE = Math.log(0.5) / Math.log(0.64);
+  function pointsFromDifficulty(raw){
     const value = text(raw).replace(',', '.');
     if (!/^[0-6](?:\.\d{1,2})?$/.test(value)) return null;
     const difficulty = Number(value);
     if (!Number.isFinite(difficulty) || difficulty < 0 || difficulty >= 7) return null;
     const integer = Math.floor(difficulty);
-    return XP_BASE[integer] + Math.round((difficulty - integer) * 100);
+    const hundredths = Math.round(difficulty * 100) - integer * 100;
+    return 100 + integer * 100 + (hundredths === 0 ? 0 : Math.max(1, Math.floor(100 * ((hundredths / 100) ** CURVE) + 1e-9)));
   }
   const canonical = x => text(x).normalize('NFKC').replace(/[\u200b-\u200f\u2060\ufeff]/g,'').replace(/[\u2018\u2019\u201b\u00b4\u0060]/g,"'").replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,' ').toLowerCase();
   const signature = x => canonical(x).replace(/[^\p{L}\p{N}]+/gu,'');
@@ -87,7 +86,7 @@
           if(seenCompleted.has(distinct))continue;
           seenCompleted.add(distinct);
           if(!players.has(key))players.set(key,{key,name:playerName,clears:[],totalXp:0});
-          const xp=xpFromDifficulty(ranked.difficulty);
+          const xp=pointsFromDifficulty(ranked.difficulty);
           players.get(key).clears.push({rank:ranked.rank,title:ranked.title,platform,xp});
           if(xp!==null) players.get(key).totalXp+=xp;
         }
@@ -121,7 +120,7 @@
     $('selectedPlayerName').textContent=player.name;
     $('selectedPlayerBest').textContent=player.clears[0].title;
     $('selectedPlayerCount').textContent=String(player.clears.length);
-    $('selectedPlayerXp').textContent=xpFormat.format(player.totalXp)+' Points';
+    $('selectedPlayerXp').textContent=pointsFormat.format(player.totalXp)+' Points';
     // Filter only this player's completed wallhops by title.
     // The player's placement, Hardest result and total completions never change.
     const query=canonical(state.completedSearch);
@@ -157,7 +156,7 @@
       const best=node('td','leaderboard-best',player.clears[0].title);
       best.title='Hardest clear: #'+player.clears[0].rank;
       const total=node('td','leaderboard-total',String(player.clears.length));
-      const xp=node('td','leaderboard-xp',xpFormat.format(player.totalXp));
+      const xp=node('td','leaderboard-xp',pointsFormat.format(player.totalXp));
       xp.title='Total Points from PC + Legacy completed wallhops';
       tr.append(place,username,best,total,xp);
       const choose=()=>{
@@ -223,6 +222,6 @@
     refresh();
     setInterval(()=>{if(!document.hidden)refresh();},30000);
   }
-  window.TTWLLeaderboardXP = Object.freeze({ calculate: xpFromDifficulty });
+  window.TTWLLeaderboardXP = Object.freeze({ calculate: pointsFromDifficulty });
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
