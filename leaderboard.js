@@ -3,12 +3,26 @@
    Hardest: lexicographic comparison of PC ranks first, then Legacy ranks.
    This prevents Legacy #1 from masking a current PC #1/#2/#3 clear.
    Total: completed wallhop count descending.
-   Each player receives a unique sequential display rank in both modes. */
+   Points: fixed difficulty XP sum (PC + Legacy, never Mobile).
+   Each player receives a unique sequential display rank in all modes. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
   const state = {mode:'hardest', search:'', completedSearch:'', players:[], selected:'', rankings:null, victors:null};
   const text = x => String(x ?? '').trim();
+  const xpFormat = new Intl.NumberFormat('en-US');
+  // Identical to the fixed difficulty XP used by ttwl-points.js.
+  // This function intentionally does not use position, ranking length, or place.
+  // Fixed tier bases: 0=100, 1=200, 2=300, 3=400, 4=1000, 5=7000, 6=50000.
+  const XP_BASE = Object.freeze([100, 200, 300, 400, 1000, 7000, 50000]);
+  function xpFromDifficulty(raw){
+    const value = text(raw).replace(',', '.');
+    if (!/^[0-6](?:\.\d{1,2})?$/.test(value)) return null;
+    const difficulty = Number(value);
+    if (!Number.isFinite(difficulty) || difficulty < 0 || difficulty >= 7) return null;
+    const integer = Math.floor(difficulty);
+    return XP_BASE[integer] + Math.round((difficulty - integer) * 100);
+  }
   const canonical = x => text(x).normalize('NFKC').replace(/[\u200b-\u200f\u2060\ufeff]/g,'').replace(/[\u2018\u2019\u201b\u00b4\u0060]/g,"'").replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,' ').toLowerCase();
   const signature = x => canonical(x).replace(/[^\p{L}\p{N}]+/gu,'');
   const validName = x => /^[A-Za-z0-9_]{3,20}$/.test(text(x));
@@ -28,12 +42,20 @@
     return y.length-x.length;
   }
   function compareTotal(a,b){return b.clears.length-a.clears.length;}
+  function comparePoints(a,b){return b.totalXp-a.totalXp;}
   function compareByMode(a,b,mode){
-    return mode==='total' ? compareTotal(a,b) : compareHardest(a,b);
+    if (mode==='total') return compareTotal(a,b);
+    if (mode==='points') return comparePoints(a,b);
+    return compareHardest(a,b);
   }
-  // Hardest breaks ties for ordering in Total mode; display ranks are unique in both modes.
+  // Each mode gets unique consecutive ranking numbers even in a tie.
+  // Points ties: Hardest, then number of clears, then username.
+  // Total ties: Hardest, then username (same rule as the earlier leaderboard).
   function compareDisplay(a,b,mode){
-    return compareByMode(a,b,mode) || (mode==='total' ? compareHardest(a,b) : 0) || a.name.localeCompare(b.name,'en',{sensitivity:'base'});
+    return compareByMode(a,b,mode)
+      || (mode!=='hardest' ? compareHardest(a,b) : 0)
+      || (mode==='points' ? compareTotal(a,b) : 0)
+      || a.name.localeCompare(b.name,'en',{sensitivity:'base'});
   }
   function rankClass(rank){return rank<=3 ? ' top-'+rank : ''; }
   function matchedWallhop(title, rows){
@@ -64,8 +86,10 @@
           const distinct=key+'\u0000'+platform+'\u0000'+canonical(ranked.title);
           if(seenCompleted.has(distinct))continue;
           seenCompleted.add(distinct);
-          if(!players.has(key))players.set(key,{key,name:playerName,clears:[]});
-          players.get(key).clears.push({rank:ranked.rank,title:ranked.title,platform});
+          if(!players.has(key))players.set(key,{key,name:playerName,clears:[],totalXp:0});
+          const xp=xpFromDifficulty(ranked.difficulty);
+          players.get(key).clears.push({rank:ranked.rank,title:ranked.title,platform,xp});
+          if(xp!==null) players.get(key).totalXp+=xp;
         }
       }
     }
@@ -88,6 +112,7 @@
     if(!player){
       $('selectedPlayerRank').textContent='#—';$('selectedPlayerName').textContent='No player selected';
       $('selectedPlayerBest').textContent='—';$('selectedPlayerCount').textContent='0';
+      $('selectedPlayerXp').textContent='0 XP';
       $('selectedPlayerCaption').textContent='0 completions';
       list.replaceChildren(node('li','player-empty','No completed wallhops are available for this selection.'));
       return;
@@ -96,6 +121,7 @@
     $('selectedPlayerName').textContent=player.name;
     $('selectedPlayerBest').textContent=player.clears[0].title;
     $('selectedPlayerCount').textContent=String(player.clears.length);
+    $('selectedPlayerXp').textContent=xpFormat.format(player.totalXp)+' XP';
     // Filter only this player's completed wallhops by title.
     // The player's placement, Hardest result and total completions never change.
     const query=canonical(state.completedSearch);
@@ -121,7 +147,7 @@
     const frag=document.createDocumentFragment();
     if(!visible.length){
       const tr=node('tr'), td=node('td','leaderboard-empty',state.players.length?'No players match your search.':'No Victors available in the selected list.');
-      td.colSpan=4;tr.append(td);frag.append(tr);
+      td.colSpan=5;tr.append(td);frag.append(tr);
     }
     for(const player of visible){
       const tr=node('tr',player.key===state.selected?'is-selected':'');tr.tabIndex=0;
@@ -131,7 +157,9 @@
       const best=node('td','leaderboard-best',player.clears[0].title);
       best.title='Hardest clear: #'+player.clears[0].rank;
       const total=node('td','leaderboard-total',String(player.clears.length));
-      tr.append(place,username,best,total);
+      const xp=node('td','leaderboard-xp',xpFormat.format(player.totalXp));
+      xp.title='Total fixed XP from PC + Legacy completed wallhops';
+      tr.append(place,username,best,total,xp);
       const choose=()=>{
         if(state.selected!==player.key){
           state.completedSearch='';
@@ -179,7 +207,7 @@
       $('leaderboardUpdated').textContent='Victors last synced: '+(date&&!Number.isNaN(date.getTime())?date.toLocaleString(): 'not available')+'. Rankings and Victors are read from the published site data.';
       recompute();
     }catch(e){
-      if(!state.players.length){$('playerRankingRows').replaceChildren((()=>{const tr=node('tr'),td=node('td','leaderboard-empty','Could not load the player leaderboard.');td.colSpan=4;tr.append(td);return tr;})());}
+      if(!state.players.length){$('playerRankingRows').replaceChildren((()=>{const tr=node('tr'),td=node('td','leaderboard-empty','Could not load the player leaderboard.');td.colSpan=5;tr.append(td);return tr;})());}
       $('leaderboardAlert').hidden=false;
       $('leaderboardAlert').textContent='Data could not be loaded: '+e.message+' Check that both data/rankings.json and data/victors.json are published.';
       console.warn('[TTWL leaderboard]',e);
@@ -191,9 +219,10 @@
       state.completedSearch=e.target.value;
       renderPlayerDetails();
     });
-    $('playerMode').addEventListener('change',e=>{state.mode=e.target.value==='total'?'total':'hardest';recompute();});
+    $('playerMode').addEventListener('change',e=>{state.mode=['hardest','total','points'].includes(e.target.value)?e.target.value:'hardest';recompute();});
     refresh();
     setInterval(()=>{if(!document.hidden)refresh();},30000);
   }
+  window.TTWLLeaderboardXP = Object.freeze({ calculate: xpFromDifficulty });
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

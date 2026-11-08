@@ -1,0 +1,12 @@
+/* Same dark-table styling as the existing TTWL PC / Legacy rankings. */
+.rankings-table:has(.ttwl-points-col) { min-width: 1170px; }
+.rankings-table .ttwl-points-col { width: 8%; }
+.rankings-table th#ttwl-points-heading,
+.rankings-table td.ttwl-points-cell { text-align: right; padding-left: 7px; padding-right: 12px; }
+.rankings-table td.ttwl-points-cell {
+  color: #edf1fa;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+#ttwl-points-detail dd { font-weight: 700; font-variant-numeric: tabular-nums; }
