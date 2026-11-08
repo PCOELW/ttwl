@@ -336,3 +336,109 @@ body:has(.rankings-table) .detail-panel {
     width: 42% !important;
   }
 }
+
+/* ==============================================================
+   PC / Mobile / Legacy — identical ranking list row dimensions,
+   and centered headings/content (including dynamically added Points).
+   Applies only to the ranking TABLE, not the detail panel or navbar.
+   =============================================================== */
+
+/* Same list box width and table box sizing in every platform. */
+body:has(.rankings-table) .rankings-column,
+body:has(.rankings-table) .table-scroll,
+body:has(.rankings-table) .rankings-table {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* The same header height and item height for PC, Mobile and Legacy. */
+.rankings-table thead tr,
+.rankings-table thead th {
+  height: 50px !important;
+}
+.rankings-table tbody tr:not(:has(.table-message)),
+.rankings-table tbody tr:not(:has(.table-message)) > td {
+  height: 52px !important;
+  max-height: 52px !important;
+}
+.rankings-table thead th,
+.rankings-table tbody td {
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding: 0 5px !important;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+/* Selected row: avoid the old first/last-cell padding shifting text. */
+.rankings-table tbody tr.is-selected > td:first-child,
+.rankings-table tbody tr.is-selected > td:last-child {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+/* Difficulty and Tier are grouped and centered, not stuck to the left. */
+.rankings-table .difficulty-cell {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  white-space: nowrap !important;
+}
+.rankings-table .difficulty-cell .difficulty-score {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+.rankings-table .difficulty-cell .tier-inline {
+  flex: 0 1 auto !important;
+  min-width: 0;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Points, titles, nicknames, links, and colored badges all align center. */
+.rankings-table th#ttwl-points-heading,
+.rankings-table td.ttwl-points-cell,
+.rankings-table td.title-value,
+.rankings-table td.person-value,
+.rankings-table td.style-value,
+.rankings-table td:has(.chip),
+.rankings-table td:has(.quality-chip) {
+  text-align: center !important;
+}
+.rankings-table td.ttwl-points-cell {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+.rankings-table .chip,
+.rankings-table .quality-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: 7px 5px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-align: center !important;
+}
+
+/* Loading and empty-state messages should stay fully readable. */
+.rankings-table td.table-message {
+  text-align: center !important;
+  height: auto !important;
+  max-height: none !important;
+  white-space: normal !important;
+  padding: 40px 10px !important;
+}
