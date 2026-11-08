@@ -212,3 +212,127 @@ body:has(.nav-item[data-platform="mobile"].is-active) .rankings-table tbody td.t
   .rankings-table .tier-inline { font-size: 10px; }
   .rankings-table .quality-chip { min-width: 0 !important; }
 }
+
+/* ===============================================================
+   TTWL — SAME PC / MOBILE / LEGACY COLUMN ALIGNMENT (2026-11-08)
+   Both modes use one physical page/table/detail-panel width.
+   PC/Legacy has a Points column; Mobile deliberately does not.
+   Mobile gives the absent Points width to Difficulty/Tier, so all
+   later shared columns start at exactly the same horizontal position.
+   This is a CSS-only update; it does not change Points or rank logic.
+   =============================================================== */
+
+/* Same table, toolbar and sidebar dimensions for either tab. */
+body:has(.rankings-table) .content-grid,
+body:has(.rankings-table) .rankings-column,
+body:has(.rankings-table) .details-column,
+body:has(.rankings-table) .toolbar,
+body:has(.rankings-table) .table-scroll,
+body:has(.rankings-table) .detail-panel {
+  min-width: 0;
+  box-sizing: border-box;
+}
+body:has(.rankings-table) .toolbar,
+body:has(.rankings-table) .table-scroll,
+body:has(.rankings-table) .detail-panel {
+  width: 100%;
+  max-width: 100%;
+}
+@media (min-width: 1501px) {
+  body:has(.rankings-table) .content-grid {
+    grid-template-columns: minmax(0, 1fr) 296px !important;
+    gap: 12px !important;
+  }
+}
+
+/*
+ * Desktop, 1041px+:
+ *   Shared:   # 3.5%, Title 16%, Verifier 9.5%, Creator 9%,
+ *             Game 5%, Video 5.5%, Style 18%, Attribute 10%, Quality 5%.
+ *   PC:       Difficulty/Tier 12.5% + Points 6%.
+ *   Mobile:   Difficulty/Tier 18.5% (12.5% + 6%).
+ * Thus column boundaries after Difficulty/Tier match across tabs.
+ */
+@media (min-width: 1041px) {
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(1),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(1) { width: 3.5% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(2),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(2) { width: 16% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(3) { width: 12.5% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(3) { width: 18.5% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(4) { width: 6% !important; }
+
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(5),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(4) { width: 9.5% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(6),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(5) { width: 9% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(7),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(6) { width: 5% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(8),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(7) { width: 5.5% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(9),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(8) { width: 18% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(10),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(9) { width: 10% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(11),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(10) { width: 5% !important; }
+}
+
+/* Tablets: the same visible columns in the same positions.
+ * Links and Style are already hidden by the preceding compact rules. */
+@media (min-width: 681px) and (max-width: 1040px) {
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(1),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(1) { width: 4% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(2),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(2) { width: 20% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(3) { width: 18% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(3) { width: 26% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(4) { width: 8% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(5),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(4) { width: 14% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(6),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(5) { width: 14% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(10),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(9) { width: 14% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(11),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(10) { width: 8% !important; }
+}
+
+/* Phones: common columns line up; Mobile's Difficulty/Tier occupies
+ * the width reserved for Points on PC. */
+@media (max-width: 680px) {
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(1),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(1) { width: 7% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(2),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(2) { width: 42% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(3) { width: 28% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(3) { width: 42% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(4) { width: 14% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(11),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(10) { width: 9% !important; }
+}
+
+/* Override older Mobile-only title/style widths in styles.css and in
+ * the compatibility reset above; those had higher specificity. */
+@media (min-width: 1041px) {
+  body:has(.nav-item[data-platform="mobile"].is-active)
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col.col-title {
+    width: 16% !important;
+  }
+  body:has(.nav-item[data-platform="mobile"].is-active)
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col.col-style {
+    width: 18% !important;
+  }
+}
+@media (min-width: 681px) and (max-width: 1040px) {
+  body:has(.nav-item[data-platform="mobile"].is-active)
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col.col-title {
+    width: 20% !important;
+  }
+}
+@media (max-width: 680px) {
+  body:has(.nav-item[data-platform="mobile"].is-active)
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col.col-title {
+    width: 42% !important;
+  }
+}
