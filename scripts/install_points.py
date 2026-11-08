@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install PC/Legacy difficulty points and set the browser tab title to TTWL.
+"""Install PC/Legacy Points and set the browser tab title to TTWL.
 
 Run AFTER building _site and AFTER any scripts/add_seo.py/add_favicon.py steps.
 Does not overwrite app.js, the original HTML, data JSON, or stylesheet.
@@ -37,4 +37,4 @@ for html_file in html_files:
             if changed != 1:
                 raise SystemExit('Could not find </body> in _site/index.html')
     html_file.write_text(text, encoding='utf-8')
-print(f'TTWL points installed (PC + Legacy only); updated title on {len(html_files)} pages.')
+print(f'TTWL Points installed for PC and Legacy; updated title on {len(html_files)} pages.')

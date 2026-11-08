@@ -112,7 +112,7 @@
     if(!player){
       $('selectedPlayerRank').textContent='#—';$('selectedPlayerName').textContent='No player selected';
       $('selectedPlayerBest').textContent='—';$('selectedPlayerCount').textContent='0';
-      $('selectedPlayerXp').textContent='0 XP';
+      $('selectedPlayerXp').textContent='0 Points';
       $('selectedPlayerCaption').textContent='0 completions';
       list.replaceChildren(node('li','player-empty','No completed wallhops are available for this selection.'));
       return;
@@ -121,7 +121,7 @@
     $('selectedPlayerName').textContent=player.name;
     $('selectedPlayerBest').textContent=player.clears[0].title;
     $('selectedPlayerCount').textContent=String(player.clears.length);
-    $('selectedPlayerXp').textContent=xpFormat.format(player.totalXp)+' XP';
+    $('selectedPlayerXp').textContent=xpFormat.format(player.totalXp)+' Points';
     // Filter only this player's completed wallhops by title.
     // The player's placement, Hardest result and total completions never change.
     const query=canonical(state.completedSearch);
@@ -158,7 +158,7 @@
       best.title='Hardest clear: #'+player.clears[0].rank;
       const total=node('td','leaderboard-total',String(player.clears.length));
       const xp=node('td','leaderboard-xp',xpFormat.format(player.totalXp));
-      xp.title='Total fixed XP from PC + Legacy completed wallhops';
+      xp.title='Total Points from PC + Legacy completed wallhops';
       tr.append(place,username,best,total,xp);
       const choose=()=>{
         if(state.selected!==player.key){

@@ -1,9 +1,9 @@
-/* TTWL fixed XP by difficulty — rank-independent presentation add-on.
+/* TTWL fixed Points by difficulty — rank-independent presentation add-on.
  * Based on numeric difficulty only, never list position or number of entries.
  * PC + Legacy only, Mobile excluded.
- * Fixed XP at integer difficulties:
+ * Fixed Points at integer difficulties:
  * 0=100, 1=200, 2=300, 3=400, 4=1,000, 5=7,000, 6=50,000.
- * Digits after the decimal add 0..99 XP: e.g. 2.20 -> +20, 2.02 -> +2.
+ * Digits after the decimal add 0..99 Points: e.g. 2.20 -> +20, 2.02 -> +2.
  * Thus 0.01=101, 0.5=150, 2.2=320, 6.5=50,050.
  * This is an original TTWL model inspired by the tier/decimal approach of SCLP,
  * NOT a verified copy of SCLP's private XP rules.
@@ -17,7 +17,7 @@
   const POINTS_COL = 'ttwl-points-col';
   const format = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
-  // The integer difficulty sets the XP tier; decimals add fixed 0–99 XP.
+  // The integer difficulty sets the points tier; decimals add fixed 0–99 points.
   // Keep this table stable as the number of wallhops changes.
   const XP_AT_INTEGER_DIFFICULTY = Object.freeze([
     100,    // 0.0
@@ -67,11 +67,12 @@
       column?.remove();
       return;
     }
+    if (heading) heading.textContent = 'Points';
     if (headingRow && !heading) {
       const th = document.createElement('th');
       th.id = POINTS_HEADER;
       th.scope = 'col';
-      th.textContent = 'XP';
+      th.textContent = 'Points';
       // After "Difficulty / Tier", before "Verifier(s)".
       headingRow.cells[2]?.after(th);
     }
@@ -89,13 +90,19 @@
       let pointsCell = tr.querySelector('.' + POINTS_CLASS);
       if (!show) {
         pointsCell?.remove();
+        if (tr.cells.length === 1) {
+          tr.cells[0].colSpan = document.querySelector('.rankings-table thead tr')?.cells.length || 10;
+        }
         continue;
       }
       const difficulty = tr.querySelector('.difficulty-score');
       const thirdCell = tr.cells[2];
       if (!difficulty || !thirdCell) {
-        // Loading / no results row uses a single colspan cell.
-        if (tr.cells.length === 1 && tr.cells[0].colSpan !== 11) tr.cells[0].colSpan = 11;
+        // Loading / no-results row needs to span every visible column.
+        if (tr.cells.length === 1) {
+          const span = document.querySelector('.rankings-table thead tr')?.cells.length || 10;
+          tr.cells[0].colSpan = span;
+        }
         continue;
       }
       if (!pointsCell) {
@@ -105,7 +112,7 @@
       }
       const newValue = pointsText(difficulty.textContent);
       if (pointsCell.textContent !== newValue) pointsCell.textContent = newValue;
-      pointsCell.title = 'Fixed XP based on difficulty';
+      pointsCell.title = 'Points based on difficulty';
     }
   }
 
@@ -123,7 +130,7 @@
       line.id = DETAIL_ID;
       line.className = 'detail-line';
       const dt = document.createElement('dt');
-      dt.textContent = 'XP';
+      dt.textContent = 'Points';
       const dd = document.createElement('dd');
       dd.id = 'ttwl-detail-points-value';
       line.append(dt, dd);
@@ -131,6 +138,8 @@
       if (tierLine) tierLine.after(line);
       else difficulty.closest('.detail-line')?.after(line);
     }
+    const detailLabel = line.querySelector('dt');
+    if (detailLabel) detailLabel.textContent = 'Points';
     const value = pointsText(difficulty.textContent);
     const label = $('ttwl-detail-points-value');
     if (label && label.textContent !== value) label.textContent = value;
