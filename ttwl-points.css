@@ -1,12 +1,214 @@
-/* Same dark-table styling as the existing TTWL PC / Legacy rankings. */
-.rankings-table:has(.ttwl-points-col) { min-width: 1170px; }
-.rankings-table .ttwl-points-col { width: 8%; }
+/* TTWL — compact, screen-fitting wallhop rankings.
+   Replaces the old ttwl-points.css (including its width:max-content rule).
+   Points formula and leaderboard calculations are unaffected. */
+
+/* Make room for the table without losing the desktop detail panel. */
+body:has(.rankings-table) .shell {
+  width: calc(100% - 28px);
+  max-width: none;
+}
+body:has(.rankings-table) .content-grid {
+  grid-template-columns: minmax(0, 1fr) clamp(270px, 18vw, 310px);
+  gap: 12px;
+}
+body:has(.rankings-table) .rankings-column,
+body:has(.rankings-table) .details-column { min-width: 0; }
+
+/* No extra width is added by any row or the Points column. */
+.rankings-table:has(.ttwl-points-col),
+.rankings-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  font-size: 12px;
+}
+.table-scroll { width:100%; max-width:100%; overflow-x:hidden; }
+
+/* The existing fixed percentages must be reset before assigning compact widths. */
+.rankings-table colgroup col,
+.rankings-table colgroup col.col-title,
+.rankings-table colgroup col.col-style,
+body:has(.nav-item[data-platform="mobile"].is-active) .rankings-table colgroup col.col-title,
+body:has(.nav-item[data-platform="mobile"].is-active) .rankings-table colgroup col.col-style {
+  width: auto !important;
+}
+
+/* PC and Legacy: #, Title, Diff/Tier, Points, Verifier, Creator,
+   Game, Video, Style, Attribute, Quality. Total = 100%. */
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(1) { width: 3.5% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(2) { width: 16% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(3) { width: 12.5% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(4) { width: 6% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(5) { width: 9.5% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(6) { width: 9% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(7) { width: 5% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(8) { width: 5.5% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(9) { width: 18% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(10){ width: 10% !important; }
+.rankings-table:has(.ttwl-points-col) colgroup col:nth-child(11){ width: 5% !important; }
+
+/* Mobile list: no Points column; ten columns. */
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(1) { width: 4% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(2) { width: 18% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(3) { width: 13% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(4) { width: 11% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(5) { width: 11% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(6) { width: 6% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(7) { width: 6% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(8) { width: 17% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(9) { width: 9% !important; }
+.rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(10){ width: 5% !important; }
+
+/* Keep one-line rows, trim only cells that genuinely exceed their allotted width. */
+.rankings-table thead th,
+.rankings-table tbody td {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+.rankings-table thead th { font-size: 11.5px; }
+.rankings-table tbody td { height: 48px; line-height: 1.35; }
+.rankings-table tbody tr.is-selected td:first-child { padding-left: 6px !important; }
+.rankings-table tbody tr.is-selected td:last-child { padding-right: 6px !important; }
+.rankings-table tbody td.title-value,
+body:has(.nav-item[data-platform="mobile"].is-active) .rankings-table tbody td.title-value {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  max-width: none !important;
+}
+.rankings-table tbody td.person-value,
+.rankings-table tbody td.style-value {
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+.rankings-table .difficulty-cell {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.rankings-table .difficulty-score { flex: 0 0 auto; white-space: nowrap !important; }
+.rankings-table .tier-inline {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap !important;
+}
+.rankings-table .chip {
+  display: inline-block;
+  vertical-align: middle;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: normal !important;
+  padding: 7px 5px;
+  line-height: 1.25;
+}
+.rankings-table td:has(.quality-chip) { text-align: center; }
+.rankings-table .quality-chip { min-width: 32px !important; padding: 7px 6px; }
+
+/* Points retain their existing visual style. */
+.rankings-table .ttwl-points-col { width: 6%; }
 .rankings-table th#ttwl-points-heading,
-.rankings-table td.ttwl-points-cell { text-align: right; padding-left: 7px; padding-right: 12px; }
+.rankings-table td.ttwl-points-cell {
+  text-align: right;
+  padding-left: 3px !important;
+  padding-right: 5px !important;
+}
 .rankings-table td.ttwl-points-cell {
   color: #edf1fa;
   font-weight: 700;
-  white-space: nowrap;
+  white-space: nowrap !important;
   font-variant-numeric: tabular-nums;
 }
 #ttwl-points-detail dd { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* At normal laptop widths, move the full detail panel below the table
+   so the ranking columns can use the whole page width. */
+@media (max-width: 1500px) {
+  body:has(.rankings-table) .content-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  body:has(.rankings-table) .details-column { width: 100%; max-width: none; }
+  body:has(.rankings-table) .detail-panel { position: static !important; }
+}
+
+/* On tablets, keep important information visible without horizontal scrolling.
+   Game/Video/Gameplay Style remain available in the selected wallhop's details. */
+@media (max-width: 1040px) {
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(7),
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(8),
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(9),
+  .rankings-table:has(.ttwl-points-col) tr > :nth-child(7),
+  .rankings-table:has(.ttwl-points-col) tr > :nth-child(8),
+  .rankings-table:has(.ttwl-points-col) tr > :nth-child(9),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(6),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(7),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(8),
+  .rankings-table:not(:has(.ttwl-points-col)) tr > :nth-child(6),
+  .rankings-table:not(:has(.ttwl-points-col)) tr > :nth-child(7),
+  .rankings-table:not(:has(.ttwl-points-col)) tr > :nth-child(8) { display: none !important; }
+
+  /* PC / Legacy: seven visible columns. */
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(1) { width: 4.5% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(2) { width: 21% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(3) { width: 18% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(4) { width: 8% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(5) { width: 14% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(6) { width: 14% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(10) { width: 13% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(11) { width: 7.5% !important; }
+  /* Mobile platform: seven visible columns. */
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(1) { width: 5% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(2) { width: 23% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(3) { width: 19% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(4) { width: 18% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(5) { width: 17% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(9) { width: 12% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(10) { width: 6% !important; }
+}
+
+/* Phone: show core ranking data; clicking a row opens all other fields below. */
+@media (max-width: 680px) {
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(5),
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(6),
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(10),
+  .rankings-table:has(.ttwl-points-col) tr > :nth-child(5),
+  .rankings-table:has(.ttwl-points-col) tr > :nth-child(6),
+  .rankings-table:has(.ttwl-points-col) tr > :nth-child(10),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(4),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(5),
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(9),
+  .rankings-table:not(:has(.ttwl-points-col)) tr > :nth-child(4),
+  .rankings-table:not(:has(.ttwl-points-col)) tr > :nth-child(5),
+  .rankings-table:not(:has(.ttwl-points-col)) tr > :nth-child(9) { display: none !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(1) { width: 7% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(2) { width: 44% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(3) { width: 27% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(4) { width: 13% !important; }
+  .rankings-table:has(.ttwl-points-col) colgroup col:nth-child(11) { width: 9% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(1) { width: 8% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(2) { width: 51% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(3) { width: 29% !important; }
+  .rankings-table:not(:has(.ttwl-points-col)) colgroup col:nth-child(10) { width: 12% !important; }
+  .rankings-table thead th { font-size: 11px; }
+  .rankings-table thead th:nth-child(3) { font-size: 0; }
+  .rankings-table thead th:nth-child(3)::after { content: 'Difficulty'; font-size: 11px; }
+  .rankings-table tbody td { font-size: 11.5px; }
+  .rankings-table .difficulty-score { font-size: 12px; }
+  .rankings-table .tier-inline { font-size: 10px; }
+  .rankings-table .quality-chip { min-width: 0 !important; }
+}
