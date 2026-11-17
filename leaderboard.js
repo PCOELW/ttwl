@@ -2,14 +2,15 @@
    Based exclusively on published data/rankings.json + data/victors.json.
    Hardest: lexicographic comparison of PC ranks first, then Legacy ranks.
    This prevents Legacy #1 from masking a current PC #1/#2/#3 clear.
-   Total: completed wallhop count descending.
-   Points: sum of fixed difficulty Points (PC + Legacy, never Mobile).
+   Total: PC completions only; Legacy and Mobile are not counted.
+   Points: PC completions only; Legacy and Mobile are not counted.
+   Player details show the PC list completion percentage (Legacy excluded).
    Same continuous Points formula as ttwl-points.js; never based on rank.
    Each player receives a unique sequential display rank in all modes. */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const state = {mode:'hardest', search:'', completedSearch:'', players:[], selected:'', rankings:null, victors:null};
+  const state = {mode:'hardest', search:'', completedSearch:'', players:[], selected:'', rankings:null, victors:null, totalPcWallhops:0};
   const text = x => String(x ?? '').trim();
   const pointsFormat = new Intl.NumberFormat('en-US');
   const CURVE = Math.log(0.5) / Math.log(0.64);
@@ -40,7 +41,7 @@
     }
     return y.length-x.length;
   }
-  function compareTotal(a,b){return b.clears.length-a.clears.length;}
+  function compareTotal(a,b){return b.pcCount-a.pcCount;}
   function comparePoints(a,b){return b.totalXp-a.totalXp;}
   function compareByMode(a,b,mode){
     if (mode==='total') return compareTotal(a,b);
@@ -85,14 +86,22 @@
           const distinct=key+'\u0000'+platform+'\u0000'+canonical(ranked.title);
           if(seenCompleted.has(distinct))continue;
           seenCompleted.add(distinct);
-          if(!players.has(key))players.set(key,{key,name:playerName,clears:[],totalXp:0});
-          const xp=pointsFromDifficulty(ranked.difficulty);
-          players.get(key).clears.push({rank:ranked.rank,title:ranked.title,platform,xp});
-          if(xp!==null) players.get(key).totalXp+=xp;
+          if(!players.has(key))players.set(key,{key,name:playerName,clears:[],pcCount:0,totalXp:0});
+          const player=players.get(key);
+          // Legacy completions are still shown under the player, but never
+          // contribute to Total, Points, or PC-list completion percentage.
+          const xp=platform==='pc' ? pointsFromDifficulty(ranked.difficulty) : null;
+          player.clears.push({rank:ranked.rank,title:ranked.title,platform,xp});
+          if(platform==='pc'){
+            player.pcCount++;
+            if(xp!==null) player.totalXp+=xp;
+          }
         }
       }
     }
-    const output=[...players.values()];
+    // Players with only Legacy completions remain visible in Hardest,
+    // but cannot rank on the PC-only Total or Points leaderboards.
+    const output=[...players.values()].filter(p=>mode==='hardest'||p.pcCount>0);
     output.forEach(p=>p.clears.sort(byRank));
     output.sort((a,b)=>compareDisplay(a,b,mode));
     output.forEach((p,i)=>{p.place=i+1;});
@@ -105,6 +114,32 @@
     path.hash=clear.platform;
     return path.href;
   }
+  // Add one summary row using the existing leaderboard styling. No HTML/CSS
+  // file change is necessary. This is intentionally idempotent.
+  function addListCompletionField(){
+    if($('selectedPlayerProgress'))return;
+    const summary=document.querySelector('.player-details-summary');
+    if(!summary)return;
+    const field=node('div','player-list-progress');
+    field.style.gridColumn='1 / -1';
+    field.style.paddingTop='12px';
+    field.style.borderTop='1px solid var(--line-2, #313d4d)';
+    const label=node('span','', 'List Completion (PC only)');
+    const value=node('strong','', '—');
+    value.id='selectedPlayerProgress';
+    value.style.fontVariantNumeric='tabular-nums';
+    field.append(label,value);
+    summary.append(field);
+  }
+  function completionPercent(pcCount,totalPc){
+    return totalPc>0 ? (100*pcCount/totalPc).toFixed(2)+'%' : '—';
+  }
+  function displayCompletion(pcCount){
+    const denominator=state.totalPcWallhops;
+    return denominator>0
+      ? `${completionPercent(pcCount,denominator)} (${pcCount}/${denominator})`
+      : '—';
+  }
   function renderPlayerDetails(){
     const player=state.players.find(p=>p.key===state.selected)||state.players[0];
     const list=$('selectedPlayerClears');
@@ -112,6 +147,7 @@
       $('selectedPlayerRank').textContent='#—';$('selectedPlayerName').textContent='No player selected';
       $('selectedPlayerBest').textContent='—';$('selectedPlayerCount').textContent='0';
       $('selectedPlayerXp').textContent='0 Points';
+      $('selectedPlayerProgress').textContent=displayCompletion(0);
       $('selectedPlayerCaption').textContent='0 completions';
       list.replaceChildren(node('li','player-empty','No completed wallhops are available for this selection.'));
       return;
@@ -119,15 +155,16 @@
     $('selectedPlayerRank').textContent='#'+player.place;
     $('selectedPlayerName').textContent=player.name;
     $('selectedPlayerBest').textContent=player.clears[0].title;
-    $('selectedPlayerCount').textContent=String(player.clears.length);
+    $('selectedPlayerCount').textContent=String(player.pcCount);
     $('selectedPlayerXp').textContent=pointsFormat.format(player.totalXp)+' Points';
+    $('selectedPlayerProgress').textContent=displayCompletion(player.pcCount);
     // Filter only this player's completed wallhops by title.
     // The player's placement, Hardest result and total completions never change.
     const query=canonical(state.completedSearch);
     const visibleClears=player.clears.filter(clear=>!query||canonical(clear.title).includes(query));
     $('selectedPlayerCaption').textContent=query
-      ? `${visibleClears.length} of ${player.clears.length} completions`
-      : player.clears.length+' completion'+(player.clears.length===1?'':'s');
+      ? `${visibleClears.length} of ${player.clears.length} shown`
+      : player.clears.length+' shown (incl. Legacy)';
     const frag=document.createDocumentFragment();
     if(!visibleClears.length){
       frag.append(node('li','player-empty','No completed wallhops match your search.'));
@@ -155,9 +192,9 @@
       const username=node('td','leaderboard-name',player.name);
       const best=node('td','leaderboard-best',player.clears[0].title);
       best.title='Hardest clear: #'+player.clears[0].rank;
-      const total=node('td','leaderboard-total',String(player.clears.length));
+      const total=node('td','leaderboard-total',String(player.pcCount));
       const xp=node('td','leaderboard-xp',pointsFormat.format(player.totalXp));
-      xp.title='Total Points from PC + Legacy completed wallhops';
+      xp.title='Total Points from PC Wallhops only (Legacy excluded)';
       tr.append(place,username,best,total,xp);
       const choose=()=>{
         if(state.selected!==player.key){
@@ -183,7 +220,7 @@
     const requested=new URLSearchParams(location.search).get('player');
     state.selected=state.players.find(p=>p.key===oldSelection)?.key||state.players.find(p=>p.key===canonical(requested))?.key||state.players[0]?.key||'';
     const alerts=[];
-    if(!state.players.length){alerts.push('No valid PC/Legacy Victors were found. Check data/victors.json: the PC and Legacy sections need the M-column note usernames.');}
+    if(!state.players.length){alerts.push('No valid Victors were found for this ranking. Total and Points require PC Wallhops completions; Hardest also includes Legacy.');}
     else if(result.unmatched){alerts.push(`${result.unmatched} Victor entries did not match a ranked wallhop and were not counted.`);}
     if(state.victors.status==='unavailable')alerts.push('The latest Victors import is marked unavailable.');
     $('leaderboardAlert').hidden=!alerts.length;
@@ -201,6 +238,9 @@
       if(!r || !Array.isArray(r.pc) || !Array.isArray(r.legacy))throw new Error('Rankings JSON is missing PC or Legacy lists.');
       if(!v || !v.pc || !v.legacy)throw new Error('Victors JSON is missing PC or Legacy data.');
       state.rankings=r;state.victors=v;
+      // Denominator: all ranked PC Wallhops (the same valid PC entries that
+      // can contribute to the leaderboard). Neither Legacy nor Mobile count.
+      state.totalPcWallhops=r.pc.filter(w=>w && text(w.title) && Number.isInteger(Number(w.rank)) && Number(w.rank)>0).length;
       const raw=v.updatedAt||r.updatedAt;
       const date=raw?new Date(raw):null;
       $('leaderboardUpdated').textContent='Victors last synced: '+(date&&!Number.isNaN(date.getTime())?date.toLocaleString(): 'not available')+'. Rankings and Victors are read from the published site data.';
@@ -213,6 +253,7 @@
     }
   }
   function init(){
+    addListCompletionField();
     $('playerSearch').addEventListener('input',e=>{state.search=e.target.value;renderPlayers();});
     $('completedWallhopSearch').addEventListener('input',e=>{
       state.completedSearch=e.target.value;
