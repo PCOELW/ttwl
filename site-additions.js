@@ -38,7 +38,8 @@
     }
     addStyle('ttwl-updates.css');
     addScript('ttwl-updates.js');
-    /* Optional split-screen package: copy its files and use its own site-additions.js loader. */
+    addStyle('ttwl-split.css');
+    addScript('ttwl-split.js');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
   else install();

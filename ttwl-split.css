@@ -1,0 +1,96 @@
+/* Optional TTWL 50/50 split layout — apply AFTER the base TTWL_Features update.
+   Only the list's rank and title are shown; the full details remain on the right. */
+@media (min-width: 861px) {
+  body.ttwl-split-ui:has(#rankingRows) .content-grid,
+  body.ttwl-split-ui.player-leaderboard-page .content-grid,
+  body.ttwl-split-ui.ttwl-packs-page .content-grid {
+    display:grid!important;
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr)!important;
+    gap:16px!important;
+    align-items:stretch!important;
+  }
+}
+body.ttwl-split-ui:has(#rankingRows) .rankings-column,
+body.ttwl-split-ui:has(#rankingRows) .details-column,
+body.ttwl-split-ui.player-leaderboard-page .rankings-column,
+body.ttwl-split-ui.player-leaderboard-page .details-column {min-width:0!important;width:100%!important;max-width:none!important;}
+body.ttwl-split-ui:has(#rankingRows) .page {padding-top:28px!important;}
+body.ttwl-split-ui:has(#rankingRows) .page-intro {margin:0 0 17px!important;padding:0!important;}
+body.ttwl-split-ui:has(#rankingRows) .page-intro h1 {font-size:28px!important;line-height:1.18!important;margin:0!important;}
+body.ttwl-split-ui:has(#rankingRows) .page-intro .tier-notice,
+body.ttwl-split-ui:has(#rankingRows) .page-intro #pageDescription{display:none!important;}
+body.ttwl-split-ui:has(#rankingRows) .rankings-column,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-main,
+body.ttwl-split-ui.ttwl-packs-page .packs-main {
+  border:1px solid #2e3d53;border-radius:14px;background:#0b1321;
+  padding:20px!important;
+}
+body.ttwl-split-ui:has(#rankingRows) .details-column,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-side,
+body.ttwl-split-ui.ttwl-packs-page .packs-side {align-self:stretch!important;}
+body.ttwl-split-ui:has(#rankingRows) .detail-panel,
+body.ttwl-split-ui.player-leaderboard-page .player-details-panel,
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel {
+  position:relative!important;top:0!important;max-width:none!important;width:100%!important;
+  min-height:min(760px,calc(100vh - 115px));border:1px solid #2e3d53!important;
+  border-radius:14px!important;padding:32px!important;overflow:hidden;
+}
+/* Wallhop rankings: keep the semantic table, but only display # and title. */
+body.ttwl-split-ui:has(#rankingRows) .rankings-table {width:100%!important;max-width:100%!important;min-width:0!important;table-layout:fixed!important;font-size:14px!important;}
+body.ttwl-split-ui:has(#rankingRows) .rankings-table thead {display:none!important;}
+body.ttwl-split-ui:has(#rankingRows) .rankings-table colgroup col:nth-child(n+3),
+body.ttwl-split-ui:has(#rankingRows) .rankings-table tbody tr>td:nth-child(n+3) {display:none!important;}
+body.ttwl-split-ui:has(#rankingRows) .rankings-table colgroup col:nth-child(1) {width:74px!important;display:table-column!important;}
+body.ttwl-split-ui:has(#rankingRows) .rankings-table colgroup col:nth-child(2) {width:auto!important;display:table-column!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr {height:64px;cursor:pointer;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td {height:64px!important;border-bottom:1px solid #243145!important;vertical-align:middle!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td:first-child {width:74px!important;text-align:center!important;font-size:17px!important;font-weight:800!important;color:#9dbcf3!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td.title-value {text-align:left!important;font-size:15px!important;font-weight:650!important;max-width:0!important;text-overflow:ellipsis;overflow:hidden;white-space:nowrap!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td {background:#1e3151!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td:first-child {box-shadow:inset 3px 0 #6894ef;}
+body.ttwl-split-ui:has(#rankingRows) .table-scroll {height: min(700px,calc(100vh - 280px));min-height:370px;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-color:#506078 transparent;scrollbar-width:thin;}
+body.ttwl-split-ui:has(#rankingRows) .toolbar {display:flex;gap:10px;flex-wrap:nowrap;margin-bottom:14px;}
+body.ttwl-split-ui:has(#rankingRows) .toolbar .toolbar-search {flex:1 1 0;min-width:0!important;}
+body.ttwl-split-ui:has(#rankingRows) .toolbar .select-wrap,
+body.ttwl-split-ui:has(#rankingRows) .toolbar #ttwl-order-toggle {flex:none;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filters {align-self:center;position:relative;flex:none;z-index:3;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filters summary {cursor:pointer;list-style:none;padding:12px 14px;border:1px solid #3b4b61;border-radius:8px;background:#192638;color:#e9f0fa;font-size:13px;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filters summary::-webkit-details-marker {display:none;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filter-panel {position:absolute;right:0;top:calc(100% + 7px);width:235px;display:flex;flex-direction:column;gap:10px;z-index:20;padding:13px;border:1px solid #3b4b61;border-radius:10px;background:#111d2c;box-shadow:0 20px 40px #0009;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filter-panel select {width:100%;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filter-panel .select-wrap {width:100%;}
+body.ttwl-split-ui:has(#rankingRows) .ttwl-split-filter-panel #ttwl-order-toggle {align-self:flex-start;}
+body.ttwl-split-ui:has(#rankingRows) .details-column .detail-heading {position:relative;z-index:1;max-width:90%;padding-top:26px;}
+body.ttwl-split-ui:has(#rankingRows) .details-column .detail-heading h2 {font-size:clamp(25px,2.3vw,39px)!important;line-height:1.24!important;}
+body.ttwl-split-ui:has(#rankingRows) .details-column .detail-data,
+body.ttwl-split-ui:has(#rankingRows) .details-column .detail-block,
+body.ttwl-split-ui:has(#rankingRows) .details-column .detail-buttons,
+body.ttwl-split-ui:has(#rankingRows) .details-column .detail-divider {position:relative;z-index:1;}
+/* Diagonal fade from the top-right YouTube thumbnail into the dark detail panel. */
+.ttwl-video-hero {position:absolute!important;z-index:0!important;right:0;top:0;width:66%;height:370px;pointer-events:none;background-position:center;background-size:cover;
+  opacity:.48;mask-image:linear-gradient(226deg,#000 0%,rgba(0,0,0,.93) 20%,transparent 86%);
+  -webkit-mask-image:linear-gradient(226deg,#000 0%,rgba(0,0,0,.93) 20%,transparent 86%);}
+.ttwl-video-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b1421 0%,transparent 85%);}
+/* Leaderboard: same 50/50 split; the player list shows only rank and player name. */
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-page {padding-top:28px!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-intro h1 {font-size:30px!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead tr>th:nth-child(n+3),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr>td:nth-child(n+3) {display:none!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table {table-layout:fixed!important;width:100%!important;min-width:0!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr>th:first-child,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr>td:first-child {width:70px!important;text-align:center!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr>th:nth-child(2),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr>td:nth-child(2){text-align:left!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr {height:58px;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table-scroll {max-height:680px;overflow:auto;}
+body.ttwl-split-ui.ttwl-packs-page .packs-card {grid-template-columns:54px minmax(0,1fr)!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-card-stat {display:none!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel {overflow:auto;}
+@media(max-width:860px){
+  body.ttwl-split-ui:has(#rankingRows) .content-grid,
+  body.ttwl-split-ui.player-leaderboard-page .content-grid,
+  body.ttwl-split-ui.ttwl-packs-page .content-grid {grid-template-columns:1fr!important;}
+  body.ttwl-split-ui:has(#rankingRows) .rankings-column {padding:12px!important;}
+  body.ttwl-split-ui:has(#rankingRows) .detail-panel {min-height:550px;padding:22px!important;}
+  body.ttwl-split-ui:has(#rankingRows) .table-scroll {height:390px;min-height:0;}
+}
