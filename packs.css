@@ -42,3 +42,6 @@ body.ttwl-packs-page { background:#101722; color:#eef2f8; }
   background-color:#07101D!important;
   box-shadow:none!important;
 }
+
+/* Align all Packs background with the PC Wallhops site canvas. */
+body.ttwl-packs-page {background:linear-gradient(90deg,#1a1f29 0%,#101826 100%)!important;}

@@ -299,3 +299,348 @@ body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected > td:first-chil
 body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr.is-selected > td:first-child {
   box-shadow:none!important;
 }
+
+
+/* ===============================================================
+   2026-11-18 | One visual language for every split-view TTWL list.
+   Reference: existing PC Wallhops panel. NO data or scoring changes.
+   =============================================================== */
+@media (min-width: 861px) {
+  body.ttwl-split-ui.ttwl-packs-page .content-grid.packs-layout,
+  body.ttwl-split-ui.player-leaderboard-page .content-grid.leaderboard-layout {
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr)!important;
+    align-items:stretch!important;
+    gap:16px!important;
+  }
+}
+
+/* Page wrapper & background: do NOT replace the shared site gradient. */
+body.ttwl-split-ui.ttwl-packs-page,
+body.ttwl-split-ui.player-leaderboard-page {
+  background:linear-gradient(90deg,#1a1f29 0%,#101826 100%)!important;
+  color:#f5f7fb;
+  font-family:Arial,sans-serif;
+}
+body.ttwl-split-ui.ttwl-packs-page .page,
+body.ttwl-split-ui.player-leaderboard-page .page,
+body.ttwl-split-ui:has(#rankingRows) .page {
+  padding-top:28px!important;
+}
+body.ttwl-split-ui .content-grid {gap:16px!important;}
+
+/* The PC page already puts its intro inside the left panel. The same
+   JS move is now performed for Leaderboard and Packs as well. */
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) > .page-intro {
+  padding:0!important;
+  margin:0 0 17px!important;
+}
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) > .page-intro h1 {
+  margin:0!important;
+  padding:0!important;
+  font-size:28px!important;
+  font-weight:700!important;
+  line-height:1.18!important;
+  letter-spacing:normal!important;
+}
+/* Unlike the other pages, Packs had a second line of explanatory text,
+   which pushed its search bar and rows down by several lines. */
+body.ttwl-split-ui.ttwl-packs-page .packs-caption {display:none!important;}
+
+/* Identical panel width, padding, outline, corner radius, surface. */
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) {
+  background:#0b1321!important;
+  border:1px solid #2e3d53!important;
+  border-radius:14px!important;
+  padding:20px!important;
+  min-width:0!important;
+  width:100%!important;
+  max-width:none!important;
+}
+body.ttwl-split-ui :is(.details-column,.leaderboard-side,.packs-side) {
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  align-self:stretch!important;
+}
+body.ttwl-split-ui :is(.details-column .detail-panel,.player-details-panel,.packs-detail-panel) {
+  box-sizing:border-box!important;
+  background:#0d151f!important;
+  border:1px solid #2e3d53!important;
+  border-radius:14px!important;
+  padding:32px!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  position:relative!important;
+  top:0!important;
+  height:min(840px, calc(100dvh - 118px))!important;
+  min-height:min(760px, calc(100dvh - 115px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  scrollbar-width:thin;
+  scrollbar-color:#51647d #0c1725;
+}
+
+/* PC toolbar (search / filter) is the common toolbar. */
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) > .toolbar {
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  gap:10px!important;
+  width:100%!important;
+  min-height:70px!important;
+  padding:12px!important;
+  margin:0 0 14px!important;
+  background:rgba(13,21,31,.84)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:12px!important;
+}
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) > .toolbar .toolbar-search {
+  box-sizing:border-box!important;
+  flex:1 1 0!important;
+  width:auto!important;
+  min-width:0!important;
+  height:45px!important;
+}
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) > .toolbar .toolbar-search input {
+  width:100%!important;
+  height:45px!important;
+  min-width:0!important;
+  background:#192432!important;
+  border:1px solid #374354!important;
+  border-radius:10px!important;
+}
+
+/* Common scrolling region & one-line 64px list rhythm. */
+body.ttwl-split-ui:has(#rankingRows) .table-scroll,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table-scroll,
+body.ttwl-split-ui.ttwl-packs-page .packs-list {
+  box-sizing:border-box!important;
+  height:min(700px,calc(100vh - 280px))!important;
+  min-height:370px!important;
+  max-height:none!important;
+  width:100%!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin;
+  scrollbar-color:#506078 transparent;
+  border:1px solid #243145!important;
+  border-radius:10px!important;
+  background:#0c131f!important;
+}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr {
+  height:64px!important;
+  background:#0c131f!important;
+}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr > td,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr > td {
+  box-sizing:border-box!important;
+  height:64px!important;
+  max-height:64px!important;
+  background:transparent!important;
+  border-bottom:1px solid #243145!important;
+  vertical-align:middle!important;
+  font-size:15px!important;
+  line-height:1.25!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead th {
+  height:46px!important;
+  font-size:13px!important;
+  background:#0c131f!important;
+  border-bottom:1px solid #334154!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > th:first-child,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > td:first-child {
+  width:74px!important;
+  max-width:74px!important;
+  font-size:16px!important;
+  text-align:center!important;
+  padding:10px 6px!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table colgroup col:first-child {width:74px!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > td:nth-child(2),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > th:nth-child(2) {
+  box-sizing:border-box!important;
+  padding:10px 16px!important;
+  text-align:left!important;
+  font-size:15px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr:hover:not(.is-selected),
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr:hover:not(.is-selected) {
+  background:#171c23!important;
+}
+
+/* Packs was accidentally forced into a 54px text column: that broke the
+   "5 wallhops" line and made titles look squashed. Remove the extra column. */
+body.ttwl-split-ui.ttwl-packs-page .packs-card {
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  align-items:center!important;
+  gap:0!important;
+  width:100%!important;
+  min-height:64px!important;
+  height:64px!important;
+  padding:9px 18px!important;
+  background:#0c131f!important;
+  border:0!important;
+  border-bottom:1px solid #243145!important;
+  border-radius:0!important;
+  color:#f5f7fb!important;
+  box-shadow:none!important;
+  text-align:left!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-card > span:first-child {
+  box-sizing:border-box!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-card-name {
+  display:block!important;
+  width:100%!important;
+  font-size:15px!important;
+  line-height:1.25!important;
+  font-weight:650!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-card-meta {
+  display:block!important;
+  width:100%!important;
+  margin:3px 0 0!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+  color:#a6b2c2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-card-stat {display:none!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-card:hover:not(.is-selected) {
+  background:#171c23!important;
+}
+
+/* Do not turn selection blue or lighter than default: same darker selection
+   on PC, Mobile, Legacy, Leaderboard and Packs. */
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected,
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected > td,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected > td,
+body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected,
+body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected:hover {
+  background:#07101d!important;
+  box-shadow:none!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected,
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected {
+  outline:1px solid #334154!important;
+  outline-offset:-1px!important;
+}
+
+/* Match the right-side stats with PC Wallhops: simple rows instead of
+   three filled cards, while retaining all actual pack data and links. */
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel > .detail-heading {
+  margin:0 0 16px!important;
+  padding:0 0 20px!important;
+  border-bottom:1px solid #334154!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel > .detail-heading h2 {
+  margin:0!important;
+  font-size:clamp(25px,2.3vw,39px)!important;
+  line-height:1.24!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-stats {
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:0!important;
+  padding:0!important;
+  margin:0!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-stats > div {
+  box-sizing:border-box!important;
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:minmax(0, 42%) minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:12px!important;
+  padding:14px 0!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid #334154!important;
+  border-radius:0!important;
+  text-align:left!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-stats span {
+  font-size:14px!important;
+  line-height:1.4!important;
+  color:#bbc7d6!important;
+  margin:0!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-detail-stats strong {
+  font-size:18px!important;
+  line-height:1.4!important;
+  font-weight:700!important;
+  margin:0!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-members-heading {margin:25px 0 12px!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-members {
+  border:1px solid #243145!important;
+  border-radius:10px!important;
+  background:#0c131f!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-members li {border-bottom:1px solid #243145!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-members li a,
+body.ttwl-split-ui.ttwl-packs-page .packs-members li .packs-member-disabled {
+  min-height:56px!important;
+  padding:12px 16px!important;
+  background:transparent!important;
+  font-size:14px!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-members li a:hover {background:#171c23!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-member-title {
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  overflow-wrap:normal!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-member-tag {
+  background:#1d2938!important;
+  color:#aebdd0!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-method {display:none!important;}
+
+/* Completed wallhops on the leaderboard: same neutral row surface. */
+body.ttwl-split-ui.player-leaderboard-page .player-clears li,
+body.ttwl-split-ui.player-leaderboard-page .player-clears > li {
+  background:#0c131f!important;
+  border-color:#243145!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .player-clears li:hover {background:#171c23!important;}
+
+@media (max-width:860px) {
+  body.ttwl-split-ui :is(.details-column .detail-panel,.player-details-panel,.packs-detail-panel) {
+    height:auto!important;
+    max-height:none!important;
+    min-height:350px!important;
+    overflow-y:visible!important;
+  }
+  body.ttwl-split-ui.ttwl-packs-page .packs-list,
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table-scroll {
+    height:390px!important;min-height:0!important;
+  }
+}
+@media (max-width:480px) {
+  body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main) {padding:12px!important;}
+  body.ttwl-split-ui.ttwl-packs-page .packs-card {padding:9px 12px!important;}
+  body.ttwl-split-ui .packs-detail-stats > div {grid-template-columns:36% 1fr!important;}
+}

@@ -56,8 +56,11 @@
  }
  function init(){
    document.body.classList.add('ttwl-split-ui');
-   const intro=$('.page-intro');const ranking=$('.rankings-column');
-   if(intro&&ranking&&$('#rankingRows'))ranking.prepend(intro);
+   // Use the PC Wallhops panel layout across PC/Mobile/Legacy, Packs and Leaderboard.
+   // Keep each page title inside its left list panel (instead of above the grid).
+   const intro=$('main.page > .page-intro');
+   const ranking=$('.rankings-column');
+   if(intro && ranking && !ranking.contains(intro)) ranking.prepend(intro);
    installFilters();refineLeaderboard();installVideoHero();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
