@@ -108,22 +108,20 @@
   function renderDetails(){
     const pack=state.packs.find(p=>p.id===state.selected)||state.packs[0];
     $('packMembers').replaceChildren();
-    if(!pack){$('packTitle').textContent='No pack selected';$('packRank').textContent='#—';$('packDifficulty').textContent='—';$('packPoints').textContent='—';$('packCount').textContent='0';return;}
-    $('packRank').textContent='#'+(state.packs.indexOf(pack)+1);
+    if(!pack){$('packTitle').textContent='No pack selected';$('packDifficulty').textContent='—';$('packPoints').textContent='—';$('packCount').textContent='0';return;}
     $('packTitle').textContent=pack.title;
     const stat=calculatePack(pack);
     $('packDifficulty').textContent=stat.difficulty===null?'—':String(stat.difficulty);
     $('packPoints').textContent=stat.points===null?'—':format.format(stat.points);
     $('packCount').textContent=String(pack.members.length);
     const frag=document.createDocumentFragment();
-    pack.members.forEach((member,i)=>{
+    pack.members.forEach(member=>{
       const li=document.createElement('li');const linked=wallhopLink(member);
       const anchor=document.createElement(linked?'a':'span');
       if(linked)anchor.href=linked.url;
       else {anchor.className='packs-member-disabled';anchor.title='No matching wallhop found in the published ranking snapshot';}
-      const number=document.createElement('span');number.className='packs-member-number';number.textContent=String(i+1).padStart(2,'0');
       const title=document.createElement('span');title.className='packs-member-title';title.textContent=member.title;
-      anchor.append(number,title);
+      anchor.append(title);
       if(linked){const tag=document.createElement('span');tag.className='packs-member-tag';tag.textContent=linked.platform.toUpperCase();anchor.append(tag);}
       li.append(anchor);frag.append(li);
     });
@@ -133,14 +131,13 @@
     const found=state.packs.filter(p=>norm(p.title).includes(norm(state.search)));
     const list=$('packsList');const frag=document.createDocumentFragment();
     found.forEach(pack=>{
-      const number=state.packs.indexOf(pack)+1,score=calculatePack(pack);
+      const score=calculatePack(pack);
       const button=document.createElement('button');button.type='button';button.className='packs-card'+(state.selected===pack.id?' is-selected':'');
       button.setAttribute('aria-pressed',String(state.selected===pack.id));
-      const rank=document.createElement('span');rank.className='packs-order';rank.textContent='#'+number;
       const text=document.createElement('span');const name=document.createElement('span');name.className='packs-card-name';name.textContent=pack.title;
       const meta=document.createElement('span');meta.className='packs-card-meta';meta.textContent=pack.members.length+' wallhops';text.append(name,meta);
       function stat(label,value){const wrap=document.createElement('span');wrap.className='packs-card-stat';const strong=document.createElement('strong');strong.textContent=value;wrap.append(strong,document.createTextNode(label));return wrap;}
-      button.append(rank,text,stat('Difficulty',score.difficulty===null?'—':String(score.difficulty)),stat('Points',score.points===null?'—':format.format(score.points)));
+      button.append(text,stat('Difficulty',score.difficulty===null?'—':String(score.difficulty)),stat('Points',score.points===null?'—':format.format(score.points)));
       button.addEventListener('click',()=>{
         state.selected=pack.id;try{localStorage.setItem('ttwl:selected-pack',pack.title);}catch(_){}
         renderList();renderDetails();
