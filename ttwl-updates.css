@@ -33,3 +33,23 @@ body:not(.ttwl-split-ui) .leaderboard-intro h1 {
   line-height: 1.15 !important;
   margin-top:0 !important;
 }
+
+/* Neutral charcoal selection color without changing overall page backgrounds. */
+:root {
+  --selected: #1c2027;
+  --selected-hover: #22262d;
+  --selected-line: #41464e;
+}
+/* For standard PC / Mobile / Legacy and leaderboard tables. */
+.rankings-table tbody tr.is-selected,
+.rankings-table tbody tr.is-selected:hover,
+.leaderboard-table tbody tr.is-selected,
+.leaderboard-table tbody tr.is-selected:hover {
+  background: #1c2027 !important;
+}
+.rankings-table tbody tr.is-selected td {
+  border-top-color: #41464e !important;
+  border-bottom-color: #41464e !important;
+}
+.rankings-table tbody tr.is-selected td:first-child { border-left-color: #41464e !important; }
+.rankings-table tbody tr.is-selected td:last-child { border-right-color: #41464e !important; }

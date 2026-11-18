@@ -9,9 +9,9 @@ body.ttwl-packs-page { background:#101722; color:#eef2f8; }
 .packs-card { width:100%; min-height:78px; text-align:left; border:0; border-bottom:1px solid #243044; background:transparent;
   display:grid; grid-template-columns:minmax(0,1fr) 90px 108px; align-items:center; gap:12px; padding:13px 18px; color:inherit; cursor:pointer; }
 .packs-card:last-child { border-bottom:0; }
-.packs-card:hover {background:#1a2839;}
-.packs-card.is-selected {background:#202d40; box-shadow:inset 3px 0 #8caddf;}
-.packs-card:focus-visible {outline:2px solid #83a2f3; outline-offset:-3px;}
+.packs-card:hover {background:#171c23;}
+.packs-card.is-selected, .packs-card.is-selected:hover {background:#1c2027; box-shadow:inset 3px 0 #41464e;}
+.packs-card:focus-visible {outline:2px solid #777d87; outline-offset:-3px;}
 .packs-card-name {font-weight:700;font-size:15px; white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .packs-card-meta {display:block;font-size:12px;color:#98a8bd;margin-top:5px;font-weight:400;}
 .packs-card-stat {text-align:center;color:#b3c4d8;font-size:11px;}
@@ -28,11 +28,10 @@ body.ttwl-packs-page { background:#101722; color:#eef2f8; }
 .packs-members li{margin:0;border-bottom:1px solid #243448;}
 .packs-members li:last-child{border-bottom:0;}
 .packs-members li a,.packs-members li .packs-member-disabled{display:flex;align-items:center;gap:12px;padding:14px 15px;text-decoration:none;color:#eaf1fb;font-size:14px;}
-.packs-members li a:hover{background:#202e40;}
+.packs-members li a:hover{background:#171c23;}
 .packs-member-title{flex:1;overflow-wrap:anywhere;}
 .packs-member-tag{font-size:11px;flex-shrink:0;color:#aac7e8;background:#23384f;padding:4px 7px;border-radius:5px;}
 .packs-member-disabled{color:#92a1b3!important;}
-.packs-method{font-size:12px;line-height:1.5;color:#8c9fb7;margin:19px 0 0;}
 .packs-bottom{padding-left:14px;}
 @media(max-width:880px){.packs-layout{grid-template-columns:1fr!important}.packs-side .detail-panel{position:static}}
 @media(max-width:560px){.packs-card{grid-template-columns:minmax(0,1fr) 65px 78px;gap:7px;padding:12px 10px}.packs-card-name{font-size:13px}.packs-card-stat strong{font-size:14px}.packs-detail-stats strong{font-size:18px}}

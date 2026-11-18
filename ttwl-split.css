@@ -33,7 +33,11 @@ body.ttwl-split-ui.player-leaderboard-page .player-details-panel,
 body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel {
   position:relative!important;top:0!important;max-width:none!important;width:100%!important;
   min-height:min(760px,calc(100vh - 115px));border:1px solid #2e3d53!important;
-  border-radius:14px!important;padding:32px!important;overflow:hidden;
+  border-radius:14px!important;padding:32px!important;
+  /* Keep the COMPLETE details including Victors accessible in the split view. */
+  height:min(840px,calc(100dvh - 118px));
+  overflow-x:hidden!important;overflow-y:auto!important;
+  scrollbar-width:thin;scrollbar-color:#51647d #0c1725;
 }
 /* Wallhop rankings: keep the semantic table, but only display # and title. */
 body.ttwl-split-ui:has(#rankingRows) .rankings-table {width:100%!important;max-width:100%!important;min-width:0!important;table-layout:fixed!important;font-size:14px!important;}
@@ -46,8 +50,8 @@ body.ttwl-split-ui:has(#rankingRows) #rankingRows tr {height:64px;cursor:pointer
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td {height:64px!important;border-bottom:1px solid #243145!important;vertical-align:middle!important;}
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td:first-child {width:74px!important;text-align:center!important;font-size:17px!important;font-weight:800!important;color:#9dbcf3!important;}
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td.title-value {text-align:left!important;font-size:15px!important;font-weight:650!important;max-width:0!important;text-overflow:ellipsis;overflow:hidden;white-space:nowrap!important;}
-body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td {background:#1e3151!important;}
-body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td:first-child {box-shadow:inset 3px 0 #6894ef;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td {background:#1c2027!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td:first-child {box-shadow:inset 3px 0 #41464e;}
 body.ttwl-split-ui:has(#rankingRows) .table-scroll {height: min(700px,calc(100vh - 280px));min-height:370px;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-color:#506078 transparent;scrollbar-width:thin;}
 body.ttwl-split-ui:has(#rankingRows) .toolbar {display:flex;gap:10px;flex-wrap:nowrap;margin-bottom:14px;}
 body.ttwl-split-ui:has(#rankingRows) .toolbar .toolbar-search {flex:1 1 0;min-width:0!important;}
@@ -71,6 +75,45 @@ body.ttwl-split-ui:has(#rankingRows) .details-column .detail-divider {position:r
   opacity:.48;mask-image:linear-gradient(226deg,#000 0%,rgba(0,0,0,.93) 20%,transparent 86%);
   -webkit-mask-image:linear-gradient(226deg,#000 0%,rgba(0,0,0,.93) 20%,transparent 86%);}
 .ttwl-video-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b1421 0%,transparent 85%);}
+/* Full wallhop details: keep Points, creator metadata, Victors and link buttons readable. */
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victors {
+  position:relative;z-index:1;display:block;min-width:0;
+  margin-top:24px;padding-top:21px;border-top:1px solid #334154;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victors[hidden] {display:none!important;}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victors-heading {
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-bottom:15px;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victors-heading h3 {
+  font-size:18px;color:#f0f4fc;margin:0;font-weight:750;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel #victorsCount {
+  color:#aab9cc;font-size:13px;white-space:nowrap;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victors-list {
+  display:grid;grid-template-columns:minmax(0,1fr);
+  gap:0;list-style:none;margin:0;padding:0;
+  max-height:none!important;overflow:visible!important;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victor-item {
+  display:flex;gap:14px;align-items:center;min-height:39px;
+  border-bottom:1px solid rgba(150,166,189,.12);padding:7px 6px;
+  font-size:14px;color:#e9eff8;min-width:0;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victor-number {
+  flex:0 0 32px;color:#849bb5;font-size:12px;font-variant-numeric:tabular-nums;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victor-name {
+  min-width:0;overflow-wrap:anywhere;text-decoration:none;color:#d9e6f7;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victor-name:hover {
+  color:#fff;text-decoration:underline;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .ttwl-victors-empty {
+  color:#9dadc1;font-size:13px;padding:11px 4px;list-style:none;
+}
+body.ttwl-split-ui:has(#rankingRows) #detailPanel .detail-buttons {position:relative;z-index:1;}
 /* Leaderboard: same 50/50 split; the player list shows only rank and player name. */
 body.ttwl-split-ui.player-leaderboard-page .leaderboard-page {padding-top:28px!important;}
 body.ttwl-split-ui.player-leaderboard-page .leaderboard-intro h1 {font-size:30px!important;}
@@ -91,6 +134,6 @@ body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel {overflow:auto;}
   body.ttwl-split-ui.player-leaderboard-page .content-grid,
   body.ttwl-split-ui.ttwl-packs-page .content-grid {grid-template-columns:1fr!important;}
   body.ttwl-split-ui:has(#rankingRows) .rankings-column {padding:12px!important;}
-  body.ttwl-split-ui:has(#rankingRows) .detail-panel {min-height:550px;padding:22px!important;}
+  body.ttwl-split-ui:has(#rankingRows) .detail-panel {min-height:550px;height:auto!important;max-height:none!important;padding:22px!important;overflow:visible!important;}
   body.ttwl-split-ui:has(#rankingRows) .table-scroll {height:390px;min-height:0;}
 }
