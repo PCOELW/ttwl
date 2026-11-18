@@ -1,0 +1,35 @@
+/* TTWL 2026-11 layout alignment and quality-of-life improvements. */
+:root { --ttwl-shell-width: 1740px; }
+.site-header-inner.shell, main.shell.page, main.shell.rules-content, main.shell.packs-page {
+  width: calc(100% - 32px) !important;
+  max-width: var(--ttwl-shell-width) !important;
+  margin-left: auto !important; margin-right: auto !important;
+}
+main.shell.page, main.shell.rules-content { padding-top: 48px; }
+.site-header-inner .main-nav { display: flex; align-items: center; gap: clamp(12px,2vw,36px); min-width: 0; }
+.site-header-inner .nav-item { white-space: nowrap; }
+.main-nav a.nav-item.ttwl-packs-link { text-decoration:none; }
+.main-nav .ttwl-packs-link.is-active { color:#fff; font-weight:700; }
+/* Hide data-transport metadata without disabling live Google Sheets polling. */
+.data-footnote { display: none !important; }
+/* Do not change score formula or individual wallhop data. */
+body:not(.ttwl-split-ui):has(#rankingRows) .rankings-table tbody td,
+body:not(.ttwl-split-ui):has(#rankingRows) .rankings-table thead th { text-align:center; }
+body:not(.ttwl-split-ui):has(#rankingRows) .rankings-table tbody .difficulty-cell { justify-content:center; }
+body:not(.ttwl-split-ui):has(#rankingRows) .rankings-table td.ttwl-points-cell,
+body:not(.ttwl-split-ui):has(#rankingRows) .rankings-table th#ttwl-points-heading { text-align:center !important; }
+@media (max-width: 850px) {
+  .site-header-inner.shell, main.shell.page, main.shell.rules-content, main.shell.packs-page { width:calc(100% - 20px) !important; }
+  .site-header-inner .main-nav { overflow-x:auto; scrollbar-width:none; flex:1 1 auto; }
+  .site-header-inner .main-nav::-webkit-scrollbar { display:none; }
+  .site-header-inner .discord-cta { flex-shrink:0; }
+  main.shell.page, main.shell.rules-content { padding-top:24px; }
+}
+/* Use the same page title scale and intro spacing on all site sections. */
+body:not(.ttwl-split-ui) .page-intro h1,
+body:not(.ttwl-split-ui) .rules-heading h1,
+body:not(.ttwl-split-ui) .leaderboard-intro h1 {
+  font-size: clamp(34px, 3.4vw, 49px) !important;
+  line-height: 1.15 !important;
+  margin-top:0 !important;
+}
