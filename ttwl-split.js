@@ -26,6 +26,21 @@
    const panel=document.createElement('div');panel.className='ttwl-split-filter-panel';
    extra.forEach(el=>panel.append(el));details.append(summary,panel);toolbar.append(details);
  }
+ // Compact Rank + Player table: keep all original leaderboard columns in the
+ // DOM so switching back to the standard table does not lose information.
+ function refineLeaderboard(){
+   const table=$('.leaderboard-table');
+   if(!table)return;
+   const rankHeading=table.querySelector('thead th:first-child');
+   if(rankHeading && rankHeading.textContent.trim()==='#') rankHeading.textContent='Rank';
+   // A <colgroup> tells fixed-table layout to reserve only 90px for Rank.
+   // Hidden metrics still exist in the original rows and detail panel.
+   if(!table.querySelector('colgroup')){
+     const group=document.createElement('colgroup');
+     for(let i=0;i<5;i++)group.append(document.createElement('col'));
+     table.insertBefore(group,table.firstChild);
+   }
+ }
  function installVideoHero(){
    const panel=$('#detailPanel'),link=$('#detailVideo');if(!panel||!link)return;
    let hero=panel.querySelector('.ttwl-video-hero');
@@ -43,7 +58,7 @@
    document.body.classList.add('ttwl-split-ui');
    const intro=$('.page-intro');const ranking=$('.rankings-column');
    if(intro&&ranking&&$('#rankingRows'))ranking.prepend(intro);
-   installFilters();installVideoHero();
+   installFilters();refineLeaderboard();installVideoHero();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

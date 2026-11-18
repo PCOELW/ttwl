@@ -137,3 +137,148 @@ body.ttwl-split-ui.ttwl-packs-page .packs-detail-panel {overflow:auto;}
   body.ttwl-split-ui:has(#rankingRows) .detail-panel {min-height:550px;height:auto!important;max-height:none!important;padding:22px!important;overflow:visible!important;}
   body.ttwl-split-ui:has(#rankingRows) .table-scroll {height:390px;min-height:0;}
 }
+
+/* 2026-11-18: Leaderboard list refinements. Keep the 50:50 layout, player
+   details, ranking logic, colors, and existing PC/Mobile/Legacy styling. */
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-controls {
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin-bottom:12px!important;
+  min-width:0!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-controls .leaderboard-search-wrap {
+  flex:1 1 0!important;
+  min-width:0!important;
+  width:auto!important;
+}
+/* Use the SAME styled Filters disclosure as the PC/Mobile/Legacy split lists.
+   The existing select inside it still controls Hardest / Total / Points. */
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters {
+  align-self:center;
+  position:relative;
+  flex:0 0 auto;
+  z-index:30;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary {
+  cursor:pointer;
+  list-style:none;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-width:142px;
+  height:45px;
+  padding:0 14px;
+  border:1px solid #3b4b61;
+  border-radius:8px;
+  background:#192638;
+  color:#e9f0fa;
+  font-size:13px;
+  font-weight:600;
+  line-height:1;
+  white-space:nowrap;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary::-webkit-details-marker {display:none;}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary::marker {content:'';}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary::after {
+  content:"";
+  display:block;
+  width:7px;
+  height:7px;
+  flex:0 0 7px;
+  border-right:2px solid #c1cfdf;
+  border-bottom:2px solid #c1cfdf;
+  transform:translateY(-2px) rotate(45deg);
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters[open] > summary::after {
+  transform:translateY(2px) rotate(225deg);
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary:hover {
+  background:#213044;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary:focus-visible {
+  outline:2px solid #aab7c7;
+  outline-offset:2px;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filter-panel {
+  position:absolute;
+  right:0;
+  top:calc(100% + 7px);
+  width:235px;
+  max-width:min(235px, calc(100vw - 34px));
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  z-index:40;
+  padding:13px;
+  border:1px solid #3b4b61;
+  border-radius:10px;
+  background:#111d2c;
+  box-shadow:0 20px 40px #0009;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filter-panel .select-wrap,
+body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filter-panel select {
+  width:100%!important;
+  min-width:0!important;
+}
+/* A compact 90px Rank column right beside Player, no phantom empty columns.
+   Five data cells are retained for the original leaderboard JS; only the first
+   two are shown in split mode. */
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table {
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  table-layout:fixed!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table colgroup col:nth-child(1) {
+  display:table-column!important;
+  width:90px!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table colgroup col:nth-child(2) {
+  display:table-column!important;
+  width:auto!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table colgroup col:nth-child(n+3) {
+  display:none!important;
+  width:0!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead tr > th:nth-child(1),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr > td:nth-child(1) {
+  box-sizing:border-box!important;
+  width:90px!important;
+  max-width:90px!important;
+  padding:10px 8px!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead tr > th:nth-child(2),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr > td:nth-child(2) {
+  box-sizing:border-box!important;
+  width:auto!important;
+  max-width:none!important;
+  padding:10px 16px!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > th:nth-child(n+3),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > td:nth-child(n+3) {
+  display:none!important;
+}
+@media(max-width:480px){
+  body.ttwl-split-ui.player-leaderboard-page .ttwl-split-filters > summary {
+    min-width:105px;
+    padding:0 10px;
+  }
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table colgroup col:first-child,
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > th:first-child,
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > td:first-child {
+    width:74px!important;
+    max-width:74px!important;
+  }
+}
