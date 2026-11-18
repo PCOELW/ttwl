@@ -10,7 +10,7 @@ body.ttwl-packs-page { background:#101722; color:#eef2f8; }
   display:grid; grid-template-columns:minmax(0,1fr) 90px 108px; align-items:center; gap:12px; padding:13px 18px; color:inherit; cursor:pointer; }
 .packs-card:last-child { border-bottom:0; }
 .packs-card:hover {background:#171c23;}
-.packs-card.is-selected, .packs-card.is-selected:hover {background:#1c2027; box-shadow:inset 3px 0 #41464e;}
+.packs-card.is-selected, .packs-card.is-selected:hover {background:#07101D; box-shadow:none;}
 .packs-card:focus-visible {outline:2px solid #777d87; outline-offset:-3px;}
 .packs-card-name {font-weight:700;font-size:15px; white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .packs-card-meta {display:block;font-size:12px;color:#98a8bd;margin-top:5px;font-weight:400;}
@@ -35,3 +35,10 @@ body.ttwl-packs-page { background:#101722; color:#eef2f8; }
 .packs-bottom{padding-left:14px;}
 @media(max-width:880px){.packs-layout{grid-template-columns:1fr!important}.packs-side .detail-panel{position:static}}
 @media(max-width:560px){.packs-card{grid-template-columns:minmax(0,1fr) 65px 78px;gap:7px;padding:12px 10px}.packs-card-name{font-size:13px}.packs-card-stat strong{font-size:14px}.packs-detail-stats strong{font-size:18px}}
+
+/* Keep normal pack cards unchanged; darken selected pack only. */
+.packs-list .packs-card.is-selected,
+.packs-list .packs-card.is-selected:hover {
+  background-color:#07101D!important;
+  box-shadow:none!important;
+}

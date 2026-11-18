@@ -50,8 +50,8 @@ body.ttwl-split-ui:has(#rankingRows) #rankingRows tr {height:64px;cursor:pointer
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td {height:64px!important;border-bottom:1px solid #243145!important;vertical-align:middle!important;}
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td:first-child {width:74px!important;text-align:center!important;font-size:17px!important;font-weight:800!important;color:#9dbcf3!important;}
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr td.title-value {text-align:left!important;font-size:15px!important;font-weight:650!important;max-width:0!important;text-overflow:ellipsis;overflow:hidden;white-space:nowrap!important;}
-body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td {background:#1c2027!important;}
-body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td:first-child {box-shadow:inset 3px 0 #41464e;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td {background:#07101D!important;}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected td:first-child {box-shadow:none!important;}
 body.ttwl-split-ui:has(#rankingRows) .table-scroll {height: min(700px,calc(100vh - 280px));min-height:370px;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-color:#506078 transparent;scrollbar-width:thin;}
 body.ttwl-split-ui:has(#rankingRows) .toolbar {display:flex;gap:10px;flex-wrap:nowrap;margin-bottom:14px;}
 body.ttwl-split-ui:has(#rankingRows) .toolbar .toolbar-search {flex:1 1 0;min-width:0!important;}
@@ -281,4 +281,21 @@ body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tr > td:nth-child(
     width:74px!important;
     max-width:74px!important;
   }
+}
+
+
+/* Selected rows ONLY: darker than the normal #0C131F background. */
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected,
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected:hover,
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected > td,
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected:hover > td,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr.is-selected,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr.is-selected:hover,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr.is-selected > td,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr.is-selected:hover > td {
+  background-color:#07101D!important;
+}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected > td:first-child,
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table tbody tr.is-selected > td:first-child {
+  box-shadow:none!important;
 }
