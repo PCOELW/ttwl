@@ -540,11 +540,30 @@ body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected:hover {
   background:#07101d!important;
   box-shadow:none!important;
 }
+/* Selected rows have NO added outline or selection border.
+   Selection is communicated by the darker background (#07101D) alone. */
 body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected,
+body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected:hover,
+body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected:focus,
+body.ttwl-split-ui.ttwl-packs-page .packs-list .packs-card.is-selected:focus-visible,
 body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected,
-body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected {
-  outline:1px solid #334154!important;
-  outline-offset:-1px!important;
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected:focus,
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected:focus-visible,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected:focus,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected:focus-visible {
+  outline:none!important;
+  box-shadow:none!important;
+}
+/* Preserve the normal subtle row divider, not a selection rectangle. */
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr.is-selected > td,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.is-selected > td {
+  outline:none!important;
+  box-shadow:none!important;
+  border-top:0!important;
+  border-left:0!important;
+  border-right:0!important;
+  border-bottom:1px solid #243145!important;
 }
 
 /* Match the right-side stats with PC Wallhops: simple rows instead of
@@ -644,3 +663,6 @@ body.ttwl-split-ui.player-leaderboard-page .player-clears li:hover {background:#
   body.ttwl-split-ui.ttwl-packs-page .packs-card {padding:9px 12px!important;}
   body.ttwl-split-ui .packs-detail-stats > div {grid-template-columns:36% 1fr!important;}
 }
+
+/* Ensure padding is included in the 50/50 grid tracks in every browser. */
+body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main,.details-column,.leaderboard-side,.packs-side) {box-sizing:border-box!important;}
