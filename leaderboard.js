@@ -375,7 +375,18 @@
     });
     list.replaceChildren(frag);
   }
+  // In the split view, show the sorting metric alongside Rank and Player.
+  // The original three metric cells are preserved; CSS exposes only the one
+  // matching the active sort mode, so no ranking data or scores are changed.
+  function updateLeaderboardMetric(){
+    const table=document.querySelector('.leaderboard-table');
+    if(!table)return;
+    table.dataset.metric=['hardest','total','points'].includes(state.mode)?state.mode:'hardest';
+    const headings=table.querySelectorAll('thead tr th');
+    if(headings[3])headings[3].textContent='Total';
+  }
   function renderPlayers(){
+    updateLeaderboardMetric();
     const visible=currentVisiblePlayers();
     const selected=currentProfile();
     const frag=document.createDocumentFragment();
@@ -390,7 +401,7 @@
       const place=node('td','leaderboard-place'+rankClass(player.place),'#'+player.place);
       const username=node('td','leaderboard-name',player.name);
       const best=node('td','leaderboard-best',player.clears[0]?.title||'—');
-      best.title='Hardest clear: #'+(player.clears[0]?.rank||'—');
+      best.title=player.clears[0]?`${player.clears[0].title} (#${player.clears[0].rank}, ${player.clears[0].platform.toUpperCase()})`:'No completions';
       const total=node('td','leaderboard-total',String(player.pcCount));
       const xp=node('td','leaderboard-xp',pointsFormat.format(player.totalXp));
       xp.title='Total Points from PC Wallhops only (Legacy excluded)';

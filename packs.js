@@ -7,7 +7,7 @@
   const $ = id => document.getElementById(id);
   const config=window.WALLHOPS_CONFIG||{};
   const sheetName=String(config.packsSheetName||'Wallhop Packs');
-  const state={packs:[],selected:'',rankings:{pc:[],mobile:[],legacy:[]},search:''};
+  const state={packs:[],selected:'',rankings:{pc:[],mobile:[],legacy:[]},search:'',victors:null,victorsError:''};
   const norm=s=>String(s??'').normalize('NFKC').trim().replace(/[\u2018\u2019\u201b\u00b4\u0060]/g,"'").replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,' ').toLocaleLowerCase('en');
   const format=new Intl.NumberFormat('en-US');
   const cell=c=>{if(!c)return '';return String(c.f??c.v??'').trim();};
@@ -105,10 +105,116 @@
     url.searchParams.set('list',found.platform);url.searchParams.set('wallhop',found.row.title);url.hash=found.platform;
     return {url:url.href,platform:found.platform};
   }
+  // Pack Victors are players with recorded completions for EVERY member.
+  // Use each member's matching platform/version, not the pack's numerical rank.
+  function memberVersion(member){
+    const matches=[];
+    for(const platform of ['pc','legacy','mobile']){
+      for(const row of state.rankings[platform]||[]){
+        if(norm(row.title)===norm(member.title))matches.push({platform,row});
+      }
+    }
+    if(!matches.length)return null;
+    const difficulty=Number(String(member.difficulty||'').trim().replace(',','.'));
+    const exact=matches.filter(({row})=>Number.isFinite(difficulty)&&
+      Math.abs(Number(String(row.difficulty??'').replace(',','.'))-difficulty)<0.0001);
+    const candidates=exact.length?exact:matches;
+    return candidates.find(c=>c.platform==='pc')||candidates.find(c=>c.platform==='legacy')||candidates[0];
+  }
+  function titleSignature(s){return norm(s).replace(/[^\p{L}\p{N}]+/gu,'');}
+  function victorsFor(section,title){
+    if(!section||typeof section!=='object'||Array.isArray(section))return null;
+    const entries=Object.entries(section).filter(([,list])=>Array.isArray(list));
+    const exact=entries.filter(([name])=>norm(name)===norm(title));
+    if(exact.length===1)return exact[0][1];
+    if(exact.length>1)return null;
+    const sig=titleSignature(title);
+    if(sig.length<4)return null;
+    const fuzzy=entries.filter(([name])=>titleSignature(name)===sig);
+    return fuzzy.length===1?fuzzy[0][1]:null;
+  }
+  function creditedVictors(platform,title){
+    const fromPlatform=victorsFor(state.victors?.[platform],title);
+    // Published 'all' is an alternative for the active PC/Mobile list; never
+    // inherit its names for Legacy, which has a separate completion record.
+    const fromAll=platform==='legacy'?null:victorsFor(state.victors?.all,title);
+    const names=fromPlatform?.length?fromPlatform:(fromAll||fromPlatform||[]);
+    const players=new Map();
+    for(const raw of names){
+      if(typeof raw!=='string')continue;
+      const display=raw.trim(),key=norm(display);
+      if(key&&!players.has(key))players.set(key,display);
+    }
+    return players;
+  }
+  function completedPackVictors(pack){
+    if(!state.victors)return {status:state.victorsError?'error':'loading',names:[]};
+    if(!pack.members.length)return {status:'empty',names:[]};
+    // The published source can temporarily be a placeholder before sync.
+    if(state.victors.status==='pending'||state.victors.status==='unavailable')
+      return {status:'unavailable',names:[]};
+    let shared=null;
+    for(const member of pack.members){
+      const found=memberVersion(member);
+      if(!found)return {status:'unmatched',names:[]};
+      const players=creditedVictors(found.platform,found.row.title);
+      if(shared===null)shared=players;
+      else for(const key of [...shared.keys()])if(!players.has(key))shared.delete(key);
+      if(shared.size===0)break;
+    }
+    return {status:'ready',names:[...(shared?.values()||[])].sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'}))};
+  }
+  function createPackVictorsPanel(){
+    const detail=$('packDetails');if(!detail)return null;
+    let panel=$('packVictorsPanel');if(panel)return panel;
+    panel=document.createElement('section');panel.id='packVictorsPanel';panel.className='packs-victors';
+    const heading=document.createElement('div');heading.className='packs-victors-heading';
+    const title=document.createElement('h3');title.textContent='Victors';
+    const count=document.createElement('span');count.id='packVictorsCount';
+    heading.append(title,count);
+    const list=document.createElement('ol');list.id='packVictorsList';list.className='packs-victors-list';
+    panel.append(heading,list);detail.append(panel);
+    return panel;
+  }
+  function renderPackVictors(pack){
+    if(!createPackVictorsPanel())return;
+    const count=$('packVictorsCount'),list=$('packVictorsList');
+    list.replaceChildren();
+    if(!pack){count.textContent='';return;}
+    const result=completedPackVictors(pack);
+    if(result.status!=='ready'||!result.names.length){
+      count.textContent=result.status==='ready'?'0 players':'—';
+      const empty=document.createElement('li');empty.className='packs-victors-empty';
+      empty.textContent={loading:'Loading Victors...',error:'Could not load Victors.',
+        unavailable:'Victors data is not available yet.',unmatched:'Some wallhops could not be matched to the list.',
+        empty:'No wallhops in this pack.',ready:'No recorded full-pack completions.'}[result.status]||'No Victors available.';
+      list.append(empty);return;
+    }
+    count.textContent=result.names.length+(result.names.length===1?' player':' players');
+    const frag=document.createDocumentFragment();
+    result.names.forEach((name,i)=>{
+      const li=document.createElement('li');
+      const a=document.createElement('a');a.href=new URL('./leaderboard.html?player='+encodeURIComponent(name)+'&tab=packs',location.href).href;
+      const num=document.createElement('span');num.className='packs-victors-number';num.textContent=String(i+1).padStart(2,'0');
+      const label=document.createElement('span');label.textContent=name;
+      a.append(num,label);li.append(a);frag.append(li);
+    });
+    list.append(frag);
+  }
+  async function loadVictors(){
+    try{
+      const response=await fetch('./data/victors.json?t='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      const data=await response.json();
+      if(!data||typeof data!=='object'||(!data.pc&&!data.legacy&&!data.all))throw Error('Invalid Victors format');
+      state.victors=data;state.victorsError='';
+    }catch(e){state.victorsError=String(e.message||e);console.warn('[TTWL pack Victors]',e);}
+    renderPackVictors(state.packs.find(p=>p.id===state.selected)||state.packs[0]);
+  }
   function renderDetails(){
     const pack=state.packs.find(p=>p.id===state.selected)||state.packs[0];
     $('packMembers').replaceChildren();
-    if(!pack){$('packTitle').textContent='No pack selected';$('packDifficulty').textContent='—';$('packPoints').textContent='—';$('packCount').textContent='0';return;}
+    if(!pack){$('packTitle').textContent='No pack selected';$('packDifficulty').textContent='—';$('packPoints').textContent='—';$('packCount').textContent='0';renderPackVictors(null);return;}
     $('packTitle').textContent=pack.title;
     const stat=calculatePack(pack);
     $('packDifficulty').textContent=stat.difficulty===null?'—':String(stat.difficulty);
@@ -126,6 +232,7 @@
       li.append(anchor);frag.append(li);
     });
     $('packMembers').append(frag);
+    renderPackVictors(pack);
   }
   function renderList(){
     const found=state.packs.filter(p=>norm(p.title).includes(norm(state.search)));
@@ -169,8 +276,9 @@
   }
   function init(){
     $('packSearch').addEventListener('input',e=>{state.search=e.target.value;renderList()});
-    loadSnapshot().then(refreshLiveTitleIndex);loadPacks();
+    loadSnapshot().then(refreshLiveTitleIndex);loadPacks();loadVictors();
     setInterval(()=>{if(!document.hidden)loadPacks()},30000);
+    setInterval(()=>{if(!document.hidden)loadVictors()},120000);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

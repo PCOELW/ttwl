@@ -780,3 +780,44 @@ body.ttwl-split-ui.ttwl-packs-page .packs-members li a:hover {background:#111b29
 body.ttwl-split-ui.player-leaderboard-page #playerRankingRows {
   border-top:1px solid #334154!important;
 }
+
+/* Active leaderboard metric. The sorting selector owns the mode; JS only
+   changes data-metric. Reveal exactly one metric to use the vacant right side. */
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="hardest"] :is(th,td):nth-child(3),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="total"] :is(th,td):nth-child(4),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="points"] :is(th,td):nth-child(5) {
+  display:table-cell!important;
+  text-align:right!important;
+  padding:10px 16px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-overflow:ellipsis!important;
+  border-bottom:1px solid #243145!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="hardest"] :is(th,td):nth-child(3) {
+  width:42%!important;
+  max-width:42%!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="total"] :is(th,td):nth-child(4),
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="points"] :is(th,td):nth-child(5) {
+  width:125px!important;
+  max-width:125px!important;
+  font-variant-numeric:tabular-nums;
+}
+/* Keep no-result messages full-width with no selectable metric cell. */
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table .ttwl-no-results td {
+  text-align:center!important;
+  width:auto!important;
+  max-width:none!important;
+}
+@media(max-width:560px){
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="hardest"] :is(th,td):nth-child(3){width:38%!important;max-width:38%!important;}
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="total"] :is(th,td):nth-child(4),
+  body.ttwl-split-ui.player-leaderboard-page .leaderboard-table[data-metric="points"] :is(th,td):nth-child(5){width:90px!important;max-width:90px!important;padding:8px!important;}
+}
+/* Packs Victors use the same compact list styling as PC Wallhops Victors. */
+body.ttwl-split-ui.ttwl-packs-page .packs-victors {margin-top:24px!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-victors-heading {border-top:1px solid #344154;padding-top:17px!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-victors-list {background:transparent!important;}
+body.ttwl-split-ui.ttwl-packs-page .packs-victors-list li a:hover {background:#111b29!important;}

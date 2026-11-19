@@ -1,4 +1,4 @@
-body.ttwl-packs-page { background:#101722; color:#eef2f8; }
+body.ttwl-packs-page { background:linear-gradient(90deg,var(--bg-grad-left,#1a1f29) 0%,var(--bg-grad-right,#101826) 100%); color:#eef2f8; }
 .packs-page .page-intro { margin-bottom: 26px; }
 .packs-caption { margin:10px 0 0; color:#a9b7c9; font-size:15px; }
 .packs-layout { grid-template-columns: minmax(0, 1fr) clamp(330px, 30%, 480px) !important; gap:16px !important; align-items:start; }
@@ -45,3 +45,15 @@ body.ttwl-packs-page { background:#101722; color:#eef2f8; }
 
 /* Align all Packs background with the PC Wallhops site canvas. */
 body.ttwl-packs-page {background:linear-gradient(90deg,#1a1f29 0%,#101826 100%)!important;}
+
+/* Full-pack Victors: only players with a clear on every constituent wallhop. */
+.packs-victors {margin-top:24px;}
+.packs-victors-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-top:16px;border-top:1px solid #344154;}
+.packs-victors-heading h3 {font-size:18px;font-weight:700;margin:0;color:#f2f6fa;}
+.packs-victors-heading span {font-size:12px;color:#9daec6;}
+.packs-victors-list {list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+.packs-victors-list li {margin:0;min-width:0;}
+.packs-victors-list li a {box-sizing:border-box;display:flex;align-items:center;gap:13px;padding:12px 14px;min-height:41px;border:1px solid #2c3a4c;border-radius:7px;background:#172434;color:#f2f6fa;text-decoration:none;font-size:14px;overflow:hidden;}
+.packs-victors-list li a:hover {background:#111b29;}
+.packs-victors-number {min-width:25px;font-size:12px;color:#91a7c2;font-variant-numeric:tabular-nums;}
+.packs-victors-empty {padding:14px 2px;color:#9daec6;font-size:13px;}
