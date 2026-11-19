@@ -45,11 +45,32 @@
    const panel=$('#detailPanel'),link=$('#detailVideo');if(!panel||!link)return;
    let hero=panel.querySelector('.ttwl-video-hero');
    if(!hero){hero=document.createElement('div');hero.className='ttwl-video-hero';hero.setAttribute('aria-hidden','true');panel.prepend(hero);}
+   // Use 16:9 thumbnails instead of hqdefault.jpg (which includes black bars).
+   // Prefer high resolution where available; fall back to the reliable 320x180 image.
+   let imageVersion=0;
    function update(){
      const id=videoId(link.getAttribute('href'));
+     const version=++imageVersion;
      hero.style.display=id?'block':'none';
-     if(id)hero.style.backgroundImage=`url("https://i.ytimg.com/vi/${id}/hqdefault.jpg")`;
-     else hero.style.backgroundImage='none';
+     hero.style.backgroundImage='none';
+     if(!id)return;
+     const variants=['maxresdefault.jpg','hq720.jpg','mqdefault.jpg'];
+     function loadVariant(index){
+       if(version!==imageVersion||index>=variants.length)return;
+       const url=`https://i.ytimg.com/vi/${id}/${variants[index]}`;
+       const thumbnail=new Image();
+       thumbnail.onload=()=>{
+         if(version!==imageVersion)return;
+         // Missing resolutions can return a small 4:3 placeholder rather than 404.
+         const ratio=thumbnail.naturalWidth/thumbnail.naturalHeight;
+         if(thumbnail.naturalWidth>=320&&ratio>1.55&&ratio<1.95){
+           hero.style.backgroundImage=`url("${url}")`;
+         }else loadVariant(index+1);
+       };
+       thumbnail.onerror=()=>loadVariant(index+1);
+       thumbnail.src=url;
+     }
+     loadVariant(0);
    }
    new MutationObserver(update).observe(link,{attributes:true,attributeFilter:['href']});
    update();

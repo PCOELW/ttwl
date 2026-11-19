@@ -140,6 +140,8 @@
       button.append(text,stat('Difficulty',score.difficulty===null?'—':String(score.difficulty)),stat('Points',score.points===null?'—':format.format(score.points)));
       button.addEventListener('click',()=>{
         state.selected=pack.id;try{localStorage.setItem('ttwl:selected-pack',pack.title);}catch(_){}
+        try{const url=new URL(location.href);url.searchParams.set('pack',pack.title);
+          history.replaceState(history.state,'',url.pathname+url.search+url.hash);}catch(_){}
         renderList();renderDetails();
       });
       frag.append(button);
@@ -159,7 +161,8 @@
       if(!packs.length)throw new Error('No pack records found in the expected columns A–J');
       state.packs=packs;
       let saved='';try{saved=localStorage.getItem('ttwl:selected-pack')||'';}catch(_){}
-      const current=state.packs.find(p=>p.title===saved);
+      const requested=new URLSearchParams(location.search).get('pack')||'';
+      const current=state.packs.find(p=>norm(p.title)===norm(requested))||state.packs.find(p=>p.title===saved);
       if(!state.selected || !state.packs.some(p=>p.id===state.selected))state.selected=current?.id||state.packs[0].id;
       $('packsAlert').hidden=true;renderList();
     }catch(e){renderError(e)}

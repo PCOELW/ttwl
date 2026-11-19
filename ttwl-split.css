@@ -666,3 +666,117 @@ body.ttwl-split-ui.player-leaderboard-page .player-clears li:hover {background:#
 
 /* Ensure padding is included in the 50/50 grid tracks in every browser. */
 body.ttwl-split-ui :is(.rankings-column,.leaderboard-main,.packs-main,.details-column,.leaderboard-side,.packs-side) {box-sizing:border-box!important;}
+
+/* ===== 2026-11-19: profile tabs and consistent empty states ===== */
+body.ttwl-split-ui.player-leaderboard-page .ttwl-profile-tabs {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  margin:18px 0 19px;
+  padding:0;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-profile-tab {
+  box-sizing:border-box;
+  min-width:0;
+  min-height:40px;
+  padding:9px 5px;
+  border:1px solid #293749;
+  border-radius:7px;
+  background:#0c131f;
+  color:#bac6d6;
+  font:600 12px/1.25 Arial,sans-serif;
+  text-align:center;
+  cursor:pointer;
+  white-space:nowrap;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-profile-tab:hover:not(.is-active) {background:#111b29;color:#f5f7fc;}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-profile-tab.is-active {
+  background:#07101d;
+  color:#fff;
+  border-color:#293749;
+  outline:none;
+  box-shadow:none;
+}
+body.ttwl-split-ui.player-leaderboard-page .ttwl-profile-tab:focus-visible {outline:1px solid #8fa2b8;outline-offset:2px;}
+body.ttwl-split-ui.player-leaderboard-page .player-clears-head {padding-top:13px;border-top:1px solid #334154;}
+body.ttwl-split-ui.player-leaderboard-page .player-clears .player-empty {
+  padding:32px 12px!important;
+  text-align:center!important;
+  color:#9db1cc!important;
+  font-weight:400!important;
+  background:#0c131f!important;
+}
+body.ttwl-split-ui :is(#detailVerifier,#detailCreator) .ttwl-credit-link {
+  color:inherit;
+  font-weight:inherit;
+  text-decoration:none;
+  cursor:pointer;
+}
+body.ttwl-split-ui :is(#detailVerifier,#detailCreator) .ttwl-credit-link:hover {
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+/* Hover should be very slightly lighter than the unselected #0C131F. */
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr:hover:not(.is-selected),
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr:hover:not(.is-selected) > td,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr:hover:not(.is-selected):not(.ttwl-no-results),
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr:hover:not(.is-selected):not(.ttwl-no-results) > td,
+body.ttwl-split-ui.ttwl-packs-page .packs-card:hover:not(.is-selected) {
+  background:#111b29!important;
+}
+/* Zero-result rows should use the same unobtrusive Packs-style placeholder. */
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr:has(>td.table-message),
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.ttwl-no-results {
+  height:105px!important;
+  cursor:default!important;
+  background:#0c131f!important;
+}
+body.ttwl-split-ui:has(#rankingRows) #rankingRows tr > td.table-message,
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows tr.ttwl-no-results > td.leaderboard-empty {
+  display:table-cell!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  max-width:none!important;
+  height:105px!important;
+  padding:32px 12px!important;
+  font:400 14px/1.5 Arial,sans-serif!important;
+  color:#9db1cc!important;
+  text-align:center!important;
+  vertical-align:middle!important;
+  background:#0c131f!important;
+  outline:none!important;
+  box-shadow:none!important;
+  border:0!important;
+  white-space:normal!important;
+}
+body.ttwl-split-ui.ttwl-packs-page .packs-list > .packs-placeholder {
+  box-sizing:border-box!important;
+  min-height:105px!important;
+  padding:39px 12px!important;
+  margin:0!important;
+  font:400 14px/1.5 Arial,sans-serif!important;
+  color:#9db1cc!important;
+  text-align:center!important;
+  background:#0c131f!important;
+}
+/* Keep the table header separator running across the WHOLE 2-column table. */
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead {
+  border-bottom:1px solid #334154!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead tr {
+  border-bottom:1px solid #334154!important;
+}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table {border-collapse:collapse!important;}
+body.ttwl-split-ui.player-leaderboard-page .leaderboard-table thead th {border-bottom:1px solid #334154!important;}
+@media(max-width:560px){
+  body.ttwl-split-ui.player-leaderboard-page .ttwl-profile-tabs {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
+/* Sub-lists use the same gentle hover tint as the main lists. */
+body.ttwl-split-ui.player-leaderboard-page .player-clears li:hover,
+body.ttwl-split-ui.player-leaderboard-page .player-clears li:hover a,
+body.ttwl-split-ui.ttwl-packs-page .packs-members li a:hover {background:#111b29!important;}
+/* Single full-width divider even when the search produces an empty table. */
+body.ttwl-split-ui.player-leaderboard-page #playerRankingRows {
+  border-top:1px solid #334154!important;
+}

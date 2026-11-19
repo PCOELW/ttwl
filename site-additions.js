@@ -40,6 +40,12 @@
     addScript('ttwl-updates.js');
     addStyle('ttwl-split.css');
     addScript('ttwl-split.js');
+    addScript('ttwl-profile-links.js');
+    // The original Victors renderer lives in victors.js and reads data/victors.json.
+    // Use the existing renderer rather than substituting a sample/partial list.
+    if (!Array.from(document.scripts).some(s => {
+      try { return new URL(s.src).pathname.endsWith('/victors.js'); } catch (_) { return false; }
+    })) addScript('victors.js');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
   else install();
