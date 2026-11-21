@@ -26,6 +26,24 @@
     if(!p.members.length||valid.length!==p.members.length||points.length!==p.members.length)return {difficulty:null,points:null};
     return {difficulty:Math.ceil(valid.reduce((a,b)=>a+b,0)/valid.length),points:Math.round(points.reduce((a,b)=>a+b,0)/points.length)};
   }
+  // Packs have no rank. Sort by the displayed, rounded-up pack difficulty,
+  // using the unrounded member average only to order equally rated packs.
+  // Stable original-sheet order is the final tiebreaker.
+  function orderPacksByDifficulty(packs){
+    const entries=packs.map((pack,index)=>{
+      const difficulty=calculatePack(pack).difficulty;
+      const values=pack.members.map(m=>Number(String(m.difficulty||'').trim().replace(',','.')));
+      const valid=values.length>0&&values.every(n=>Number.isFinite(n)&&n>=0&&n<7);
+      const mean=valid?values.reduce((a,b)=>a+b,0)/values.length:null;
+      return {pack,index,difficulty,mean};
+    });
+    entries.sort((a,b)=>{
+      if(a.difficulty===null)return b.difficulty===null?a.index-b.index:1;
+      if(b.difficulty===null)return -1;
+      return b.difficulty-a.difficulty||(b.mean-a.mean)||a.index-b.index;
+    });
+    return entries.map(item=>item.pack);
+  }
   function spreadsheetId(){return String(config.spreadsheetUrl||'').match(/\/spreadsheets\/d\/([\w-]+)/)?.[1]||'';}
   let serial=0;
   function fetchGviz(tab){
@@ -266,7 +284,7 @@
   async function loadPacks(){
     try {const table=await fetchGviz(sheetName);const packs=parsePacks(table);
       if(!packs.length)throw new Error('No pack records found in the expected columns A–J');
-      state.packs=packs;
+      state.packs=orderPacksByDifficulty(packs);
       let saved='';try{saved=localStorage.getItem('ttwl:selected-pack')||'';}catch(_){}
       const requested=new URLSearchParams(location.search).get('pack')||'';
       const current=state.packs.find(p=>norm(p.title)===norm(requested))||state.packs.find(p=>p.title===saved);
